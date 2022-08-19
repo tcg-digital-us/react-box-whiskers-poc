@@ -1,4 +1,4 @@
 
 ```
-sphinx-build -b html source ../www
+sphinx-build -b html source build
 ```
