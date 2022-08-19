@@ -1,5 +1,7 @@
 
-`<- Go Back.`__
+.. only:: CustomNav
+
+   `<- Go Back.`__
 
 .. _Back: ../development.html
 
@@ -90,7 +92,9 @@ initial startup, so make sure you write it down!*
 
    <center>
 
-`On to creating the backend ->`__
+.. only:: CustomNav
+
+   `On to creating the backend ->`__
 
 .. _Next: ./create-backend.html
 
