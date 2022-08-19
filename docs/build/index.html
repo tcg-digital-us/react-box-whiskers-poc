@@ -16,7 +16,7 @@
     <script src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="About" href="project/getting-started.html" />
+    <link rel="next" title="Development" href="project/development.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -35,19 +35,48 @@
             
   <section id="creating-a-vega-visualization-using-react-with-elasticsearch-backend">
 <h1>Creating a Vega visualization using React with Elasticsearch backend<a class="headerlink" href="#creating-a-vega-visualization-using-react-with-elasticsearch-backend" title="Permalink to this heading">¶</a></h1>
+<p>This tutorial serves to help developers set up a basic React project
+powered by Elasticsearch for the development of elastic data
+visualizations using Vega.</p>
+<p>The goal of this project is to create a single-page web-app using the React framework that
+displays an interactive box-and-whiskers data visualization using the Vega visualization
+grammar with data retrieved from a backend server connected to an Elasticsearch data-store.</p>
+<p>Throughout the process of working on this project it became apparent that there would be
+many different pieces involved, so we have done the best we can to cover all information
+required.</p>
+<section id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Basic background/understanding of JavaScript</p></li>
+<li><p>Basic understanding of React</p></li>
+<li><p>NodeJs v18.4.0</p></li>
+<li><p>NPM v8.12.1</p></li>
+</ul>
+<center><p><a class="reference external" href="./project/development.html">Let’s Begin -&gt;</a></p>
+</center><hr class="docutils" />
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="project/getting-started.html">About</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="project/getting-started.html#requirements">Requirements</a></li>
-</ul>
-</li>
 <li class="toctree-l1"><a class="reference internal" href="project/development.html">Development</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="project/development/elasticsearch-setup.html">Download and Manage an Elasticsearch Instance</a></li>
 <li class="toctree-l2"><a class="reference internal" href="project/development/create-backend.html">Create a Basic NodeJS Elasticsearch Backend</a></li>
 <li class="toctree-l2"><a class="reference internal" href="project/development/create-react.html">Create A Basic React application</a></li>
 <li class="toctree-l2"><a class="reference internal" href="project/development/create-vega.html">Create a Vega Visuialisation in React</a></li>
-<li class="toctree-l2"><a class="reference internal" href="project/development/define-api.html">Further Define the Backend API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="project/development/define-api.html">Further Define the Backend API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="project/development/define-api.html#status">Status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="project/development/define-api.html#index">Index</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="project/development/define-api.html#new">New</a></li>
+<li class="toctree-l4"><a class="reference internal" href="project/development/define-api.html#id2">Status</a></li>
+<li class="toctree-l4"><a class="reference internal" href="project/development/define-api.html#docs">Docs</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="project/development/define-api.html#all">All</a></li>
+<li class="toctree-l5"><a class="reference internal" href="project/development/define-api.html#add">Add</a></li>
+<li class="toctree-l5"><a class="reference internal" href="project/development/define-api.html#import">Import</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="project/development/integrate-vega-elasticsearch.html">Incorporate Real-Time Elasticsearch Data Into Vega Visualisation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="project/development/vega-form.html">Develop Form For Data Submission and Integration Into Refreshed Vega Visualisation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="project/development/final-touches.html">CSS Styling and Cleaning Up</a></li>
@@ -56,13 +85,6 @@
 </ul>
 </div>
 </section>
-<section id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this heading">¶</a></h1>
-<ul class="simple">
-<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
-<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
-<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
-</ul>
 </section>
 
 
@@ -84,7 +106,6 @@
 <h3>Navigation</h3>
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="project/getting-started.html">About</a></li>
 <li class="toctree-l1"><a class="reference internal" href="project/development.html">Development</a></li>
 </ul>
 
@@ -92,7 +113,7 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="#">Documentation overview</a><ul>
-      <li>Next: <a href="project/getting-started.html" title="next chapter">About</a></li>
+      <li>Next: <a href="project/development.html" title="next chapter">Development</a></li>
   </ul></li>
 </ul>
 </div>

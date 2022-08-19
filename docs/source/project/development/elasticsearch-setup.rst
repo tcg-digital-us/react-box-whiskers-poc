@@ -1,4 +1,10 @@
 
+`<- Go Back.`__
+
+.. _Back: ../development.html
+
+__ Back_
+
 Download and Manage an Elasticsearch Instance
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -79,3 +85,17 @@ we will need it again later.
 
 **Note:** *The password for the elastic user is only shown once upon
 initial startup, so make sure you write it down!*
+
+.. raw:: html
+
+   <center>
+
+`On to creating the backend ->`__
+
+.. _Next: ./create-backend.html
+
+__ Next_
+
+.. raw:: html
+
+   <center>

@@ -6,16 +6,26 @@
 Creating a Vega visualization using React with Elasticsearch backend
 ====================================================================
 
+.. include:: project/about.rst
+
+.. raw:: html
+
+   <center>
+
+`Let's Begin ->`__
+
+.. _Next: ./project/development.html
+
+__ Next_
+
+.. raw:: html
+
+   </center>
+
+----
+
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 5
    :caption: Contents:
 
-   project/getting-started
    project/development
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

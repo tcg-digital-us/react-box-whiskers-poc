@@ -1,9 +1,29 @@
 
+`<- Go Back`__
+
+.. _Back: ../index.html
+
+__ Back_
+
 Development
 -----------
 
+.. raw:: html
+
+   <center>
+
+`Start setting up Elasticsearch ->`__
+
+.. _Next: ./development/elasticsearch-setup.html
+
+__ Next_
+
+.. raw:: html
+
+   </center>
+
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :caption: Contents:
 
    development/elasticsearch-setup

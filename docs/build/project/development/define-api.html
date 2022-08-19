@@ -42,20 +42,83 @@ are actually trying to accomplish. We need to use an actual dataset that
 we can query data from that would be relevant in displaying to a box and
 whiskers graph.</p>
 <p>A freely available dataset that is perfect for our purposes is the
-penguins dataset provided by (). A copy of this JSON file is also
-available in the repo under the <code class="docutils literal notranslate"><span class="pre">res</span></code> folder. The data is an array of
-JSON objects, so in effect we can import this file as a list of
-documents to add to the index, but to do so we need to manipulate the
-data in a way that makes Elasticsearch’s bulk upload function happy.</p>
+penguins dataset provided in the <a class="reference external" href="https://github.com/vega/vega-datasets/blob/next/data/penguins.json">vega-datasets repository</a>. A copy of this JSON file is also
+available in the repo under the <code class="docutils literal notranslate"><span class="pre">res</span></code> folder.</p>
 <p>Given this, we will be developing some API ends that are required for
 our visualisation, and some others that are just for ease of use. The
 functionalites for ease of use will be denoted as such, and they won’t
 have in-depth explanations (though, feel free to go through their code
 and understand why they do what they do).</p>
-<section id="put-import">
-<h2>PUT: Import<a class="headerlink" href="#put-import" title="Permalink to this heading">¶</a></h2>
-<section id="cli-functionality">
-<h3>CLI Functionality:<a class="headerlink" href="#cli-functionality" title="Permalink to this heading">¶</a></h3>
+<nav class="contents local" id="minimal-api-routes-required">
+<p class="topic-title">Minimal API Routes Required:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#status" id="id3">Status</a></p></li>
+<li><p><a class="reference internal" href="#index" id="id4">Index</a></p>
+<ul>
+<li><p><a class="reference internal" href="#new" id="id5">New</a></p></li>
+<li><p><a class="reference internal" href="#id2" id="id6">Status</a></p></li>
+<li><p><a class="reference internal" href="#docs" id="id7">Docs</a></p>
+<ul>
+<li><p><a class="reference internal" href="#all" id="id8">All</a></p></li>
+<li><p><a class="reference internal" href="#add" id="id9">Add</a></p></li>
+<li><p><a class="reference internal" href="#import" id="id10">Import</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+<section id="status">
+<h2>Status<a class="headerlink" href="#status" title="Permalink to this heading">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">status</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="index">
+<h2>Index<a class="headerlink" href="#index" title="Permalink to this heading">¶</a></h2>
+<p>The Index route provides functionality to create and modify Elasticsearch indices.</p>
+<section id="new">
+<h3>New<a class="headerlink" href="#new" title="Permalink to this heading">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">index</span><span class="o">/</span><span class="n">new</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="id2">
+<h3>Status<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">index</span><span class="o">/</span><span class="n">status</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="docs">
+<h3>Docs<a class="headerlink" href="#docs" title="Permalink to this heading">¶</a></h3>
+<section id="all">
+<h4>All<a class="headerlink" href="#all" title="Permalink to this heading">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">index</span><span class="o">/</span><span class="n">docs</span><span class="o">/</span><span class="nb">all</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="add">
+<h4>Add<a class="headerlink" href="#add" title="Permalink to this heading">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">index</span><span class="o">/</span><span class="n">docs</span><span class="o">/</span><span class="n">add</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="import">
+<h4>Import<a class="headerlink" href="#import" title="Permalink to this heading">¶</a></h4>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>PUT: /index/docs/import
+</pre></div>
+</div>
+<p>Imports data contained inside a JSON file into an Elasticsearch index.</p>
+<p>The data is an array of
+JSON objects, so in effect we can import this file as a list of
+documents to add to a penguins index, but to do so we need to manipulate the
+data in a way that makes Elasticsearch’s bulk upload function happy.</p>
+<p><strong>Equivalent Elasticsearch CLI API Call</strong></p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl --cacert <span class="s1">&#39;/path/to/elasticsearch-8.3.3/config/certs/http_ca.crt&#39;</span> --user <span class="s1">&#39;elastic:ELASTIC_PASSWORD&#39;</span> -X PUT --header <span class="s1">&#39;Content-Type: application/json&#39;</span> https://localhost:9200/_bulk -d <span class="s1">&#39;</span>
 <span class="s1">{ &quot;index&quot;:{ &quot;_index&quot;: &quot;penguins&quot;} }</span>
 <span class="s1">{ &quot;Species&quot;: &quot;Adelie&quot;, &quot;Island&quot;: &quot;Torgersen&quot;, &quot;Beak Length (mm)&quot;: 39.1, &quot;Beak Depth (mm)&quot;: 18.7, &quot;Flipper Length (mm)&quot;: 181, &quot;Body Mass (g)&quot;: 3750, &quot;Sex&quot;: &quot;MALE&quot; }</span>
@@ -97,6 +160,7 @@ appended to server.js:</p>
 </section>
 </section>
 </section>
+</section>
 
 
           </div>
@@ -117,13 +181,26 @@ appended to server.js:</p>
 <h3>Navigation</h3>
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../getting-started.html">About</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../development.html">Development</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="elasticsearch-setup.html">Download and Manage an Elasticsearch Instance</a></li>
 <li class="toctree-l2"><a class="reference internal" href="create-backend.html">Create a Basic NodeJS Elasticsearch Backend</a></li>
 <li class="toctree-l2"><a class="reference internal" href="create-react.html">Create A Basic React application</a></li>
 <li class="toctree-l2"><a class="reference internal" href="create-vega.html">Create a Vega Visuialisation in React</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Further Define the Backend API</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Further Define the Backend API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#status">Status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#index">Index</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#new">New</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">Status</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#docs">Docs</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#all">All</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#add">Add</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#import">Import</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="integrate-vega-elasticsearch.html">Incorporate Real-Time Elasticsearch Data Into Vega Visualisation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="vega-form.html">Develop Form For Data Submission and Integration Into Refreshed Vega Visualisation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="final-touches.html">CSS Styling and Cleaning Up</a></li>

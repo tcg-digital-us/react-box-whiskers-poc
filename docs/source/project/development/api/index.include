@@ -1,0 +1,16 @@
+
+Index
+^^^^^
+
+The Index route provides functionality to create and modify Elasticsearch indices.
+
+.. include:: ./api/index/new.rst
+
+----
+
+.. include:: ./api/index/status.rst
+
+----
+
+.. include:: ./api/index/docs.include
+

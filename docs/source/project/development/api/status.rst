@@ -1,0 +1,8 @@
+
+
+Status
+^^^^^^
+
+.. code::
+
+   /status
