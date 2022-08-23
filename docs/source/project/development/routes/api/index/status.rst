@@ -1,33 +1,39 @@
 
-Status
+Count
 ######
 
-Get the status of a single index.
+Get the count of documents within a single index.
 
 .. panels::
    :container: container-lg pb-3
    :column: col-lg-12 p-2
 
-   :badge:`GET,badge-primary` /index/{index_name}/status
+   :badge:`GET,badge-primary` /index/{index_name}/count
 
 **Parameters:**
 
-* index_name [string] - Name of index whose status will be fetched.
+* index_name - Name of index whose size will be fetched.
 
 **Code**
 
 .. code:: javascript
 
-   app.get("/index/:name/status", (req, res) => {
-      if (!req.params.name) {
-         res.json({ "error": "index name is a required parameter." })
-      } else {
-         client.indices.get({
-            index: req.params.name
-         }).then((resres) => {
-            res.json(resres)
-         }).catch((resres) => {
-            res.json(resres)
-         })
-      }
+   app.get("/index/:name/count", (req, res) => {
+
+     const name = req.params.name
+
+     if (!name) {
+       res.json({ "error": "index name is a required parameter." })
+     } else {
+       client.count({
+         index: name
+       }).then((es_res) => {
+         res.json(es_res)
+       }).catch((es_err) => {
+         res.json(es_err)
+       })
+     }
    })
+
+
+   

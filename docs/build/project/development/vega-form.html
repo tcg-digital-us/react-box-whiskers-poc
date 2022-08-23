@@ -200,7 +200,7 @@ current fetch’s response:</p>
 
 <span class="w">  </span><span class="kd">var</span><span class="w"> </span><span class="nx">request_data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
 
-<span class="w">  </span><span class="c1">// Build request_data object with our index and</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// Build request_data object with our desired index name along with</span><span class="w"></span>
 <span class="w">  </span><span class="c1">// the values provided in the form inputs via their id/name.</span><span class="w"></span>
 <span class="w">  </span><span class="nx">request_data</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;penguins&quot;</span><span class="w"></span>
 <span class="w">  </span><span class="nx">request_data</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
@@ -225,6 +225,7 @@ current fetch’s response:</p>
 <span class="w">  </span><span class="p">})</span><span class="w"></span>
 <span class="w">  </span><span class="p">.</span><span class="nx">then</span><span class="p">((</span><span class="nx">response</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">().</span><span class="nx">then</span><span class="p">((</span><span class="nx">data</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+
 <span class="w">      </span><span class="c1">// Update the state, causing the module to refresh.</span><span class="w"></span>
 <span class="w">      </span><span class="nx">setLastElasticResponse</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span><span class="w"></span>
 <span class="w">    </span><span class="p">})</span><span class="w"></span>
@@ -248,7 +249,7 @@ current fetch’s response:</p>
 
 <span class="w">  </span><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">getBoxPlotData</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[]</span><span class="w"></span>
-<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;http://localhost:3001/index/docs/all?name=penguins&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;http://localhost:3001/index/penguins/docs/all&#39;</span><span class="w"></span>
 <span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">fetch</span><span class="p">(</span><span class="nx">url</span><span class="p">);</span><span class="w"></span>
 <span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">elastic_json</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">();</span><span class="w"></span>
 <span class="w">    </span><span class="nx">elastic_json</span><span class="p">.</span><span class="nx">forEach</span><span class="p">((</span><span class="nx">each</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>

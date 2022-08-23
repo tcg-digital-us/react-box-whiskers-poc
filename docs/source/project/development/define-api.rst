@@ -10,13 +10,12 @@ whiskers graph.
 
 A freely available dataset that is perfect for our purposes is the
 penguins dataset provided in the `vega-datasets repository`__. A copy of this JSON file is also
-available in the repo under the ``res`` folder.
+available in the repo under the ``res`` folder. We will use this data to 
+create a box and whiskers plot that shows the variety of Body Mass in grams across multiple
+penguin species.
 
 Given this, we will be developing some API ends that are required for
-our visualisation, and some others that are just for ease of use. The
-functionalites for ease of use will be denoted as such, and they won't
-have in-depth explanations (though, feel free to go through their code
-and understand why they do what they do).
+our visualisation, and some others that are just for ease of working with Elasticsearch.
 
 .. _Penguins: https://github.com/vega/vega-datasets/blob/next/data/penguins.json
 
@@ -49,7 +48,7 @@ Client API to get the status of an index:
    *This method of Ctrl-click'ing through the source code should work with most modern
    IDE's, but if it doesn't work for you, then I recommend using Visual Studio Code.*
 
-1. Let's say we wanted to implement a call in ``server.js`` to get the status of an index:
+1. Let's say we wanted to implement a call in ``index.js`` to get the status of an index:
 
    .. code:: javascript
 
@@ -106,10 +105,10 @@ Client API to get the status of an index:
 
    .. NOTE::
 
-      *This is only for instructinoal purposes. In step two above, we see that the ``get`` function returns a promise so that will
+      *This is only for instructinoal purposes. In step two above, we see that the* ``get()`` *function returns a promise so that will
       need to be handled accordingly.*
 
-Now, lets continue on to defining our server API!
+With this in mind, lets continue on to defining our server API!
 
 .. toctree::
    :maxdepth:  10

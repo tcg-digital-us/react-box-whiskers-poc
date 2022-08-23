@@ -46,7 +46,10 @@
 <li class="toctree-l2"><a class="reference internal" href="elasticsearch-setup.html">Download and Manage an Elasticsearch Instance</a></li>
 <li class="toctree-l2"><a class="reference internal" href="create-backend.html">Create a Basic NodeJS Elasticsearch Backend</a></li>
 <li class="toctree-l2"><a class="reference internal" href="create-react.html">Create A Basic React application</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Create a Vega Visuialisation in React</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Create a Vega Visuialisation in React</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#resources">Resources</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="define-api.html">Further Define the Backend API</a></li>
 <li class="toctree-l2"><a class="reference internal" href="load-data.html">Loading Datasets Into Elasticsearch</a></li>
 <li class="toctree-l2"><a class="reference internal" href="integrate-vega-elasticsearch.html">Incorporate Real-Time Elasticsearch Data Into Vega Visualisation</a></li>
@@ -83,13 +86,13 @@
              
   <section id="create-a-vega-visuialisation-in-react">
 <h1>Create a Vega Visuialisation in React<a class="headerlink" href="#create-a-vega-visuialisation-in-react" title="Permalink to this headline"></a></h1>
-<p>To start with, we need to install and import Vega:</p>
+<p>To start with, we need to install the Vega grammar:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ npm install vega vega-lite vega-embed
 </pre></div>
 </div>
-<p>In App.js we need to import <code class="docutils literal notranslate"><span class="pre">vega-embed</span></code>:</p>
+<p>In <code class="docutils literal notranslate"><span class="pre">src/App.js</span></code> we need to import <code class="docutils literal notranslate"><span class="pre">vega-embed</span></code> after the other imports at
+the top of our file:</p>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">...</span><span class="w"></span>
-<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">useEffect</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;react&#39;</span><span class="p">;</span><span class="w"></span>
 <span class="k">import</span><span class="w"> </span><span class="nx">vegaEmbed</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;vega-embed&#39;</span><span class="p">;</span><span class="w"></span>
 <span class="p">...</span><span class="w"></span>
 </pre></div>
@@ -97,18 +100,27 @@
 <p>Our visualisation needs to be created in the effect that we created so
 that we can get info from the elastic_json data that was returned and
 build our graph with it. The scehma provided is a basic bar graph schema
-provided by Vega.</p>
+provided by Vega. We are pulling the metrics for our bar graph out of the JSON
+returned by our backend <code class="docutils literal notranslate"><span class="pre">/status</span></code> call.</p>
 <div class="highlight-JSX notranslate"><div class="highlight"><pre><span></span><span class="nx">useEffect</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">  </span><span class="p">(</span><span class="k">async</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;http://localhost:3001&#39;</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;http://localhost:3001/status&#39;</span><span class="p">);</span><span class="w"></span>
 <span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">elastic_json</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">();</span><span class="w"></span>
 
-<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="nx">yourVlSpec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">      </span><span class="nx">$schema</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;https://vega.github.io/schema/vega-lite/v5.json&#39;</span><span class="p">,</span><span class="w"> </span><span class="c1">// Default Vega bar chart.</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// This is the specification for a bar chart found and modified from</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// code in Vega&#39;s docs https://vega.github.io/vega-lite/docs/bar.html</span><span class="w"></span>
+<span class="w">    </span><span class="c1">//</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// For the data values in the graph, there are three bars, and we</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// are getting the values for those three bars from the returned JSON object.</span><span class="w"></span>
+<span class="w">    </span><span class="c1">//</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// Encoding will be mentioned later, but the vega documentation should</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// have everything you need https://vega.github.io/vega-lite/docs/</span><span class="w"></span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="nx">bar_graph_spec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="nx">$schema</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;https://vega.github.io/schema/vega-lite/v5.json&#39;</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nx">description</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;A simple bar chart with embedded data.&#39;</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nx">data</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nx">values</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="w"></span>
-<span class="w">          </span><span class="p">{</span><span class="nx">Metric</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;Nodes&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">Count</span><span class="o">:</span><span class="w"> </span><span class="nx">elastic_json</span><span class="p">.</span><span class="nx">number_of_nodes</span><span class="p">},</span><span class="w"> </span><span class="c1">// We can directly reference the JSON fields available.</span><span class="w"></span>
+<span class="w">          </span><span class="p">{</span><span class="nx">Metric</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;Nodes&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">Count</span><span class="o">:</span><span class="w"> </span><span class="nx">elastic_json</span><span class="p">.</span><span class="nx">number_of_nodes</span><span class="p">},</span><span class="w"></span>
 <span class="w">          </span><span class="p">{</span><span class="nx">Metric</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;Data Nodes&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">Count</span><span class="o">:</span><span class="w"> </span><span class="nx">elastic_json</span><span class="p">.</span><span class="nx">number_of_data_nodes</span><span class="p">},</span><span class="w"></span>
 <span class="w">          </span><span class="p">{</span><span class="nx">Metric</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;Active Primary Shards&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">Count</span><span class="o">:</span><span class="w"> </span><span class="nx">elastic_json</span><span class="p">.</span><span class="nx">active_primary_shards</span><span class="p">}</span><span class="w"></span>
 <span class="w">        </span><span class="p">]</span><span class="w"></span>
@@ -120,23 +132,29 @@ provided by Vega.</p>
 <span class="w">      </span><span class="p">}</span><span class="w"></span>
 <span class="w">    </span><span class="p">};</span><span class="w"></span>
 
-<span class="w">    </span><span class="nx">vegaEmbed</span><span class="p">(</span><span class="s1">&#39;#Graph&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">yourVlSpec</span><span class="p">);</span><span class="w"> </span><span class="c1">// Create a visualisation and embed it in the html element with id &#39;Graph&#39; using our custom specification.</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// Create a visualisation and embed it in the html element with id &#39;Graph&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// using our custom specification.</span><span class="w"></span>
+<span class="w">    </span><span class="nx">vegaEmbed</span><span class="p">(</span><span class="s1">&#39;#Graph&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">bar_graph_spec</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">    </span><span class="nx">setElasticResponse</span><span class="p">(</span><span class="nx">elastic_json</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="p">})();</span><span class="w"></span>
 <span class="p">},</span><span class="w"> </span><span class="p">[]);</span><span class="w"></span>
 </pre></div>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><em>Make sure that you call</em> <code class="docutils literal notranslate"><span class="pre">vegaEmbed()</span></code> <em>before calling</em> <code class="docutils literal notranslate"><span class="pre">setElasticResponse()</span></code> <em>.</em></p>
+</div>
 <p>Since we set Vega to embed under an HTML element with id ‘Graph’, we
 need to add that HTML element to our returned JSX:</p>
-<div class="highlight-JSX notranslate"><div class="highlight"><pre><span></span><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">className</span><span class="o">=</span><span class="s">&quot;App&quot;</span><span class="p">&gt;</span><span class="w"></span>
-<span class="w">      </span><span class="p">&lt;</span><span class="nt">header</span> <span class="na">className</span><span class="o">=</span><span class="s">&quot;App-header&quot;</span><span class="p">&gt;</span><span class="w"></span>
-<span class="w">        </span><span class="p">{</span><span class="w"> </span><span class="nb">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">elastic_response</span><span class="p">)</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
-<span class="w">        </span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;Graph&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span><span class="w"></span>
-<span class="w">      </span><span class="p">&lt;/</span><span class="nt">header</span><span class="p">&gt;</span><span class="w"></span>
-<span class="w">    </span><span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span><span class="w"></span>
-<span class="w">  </span><span class="p">);</span><span class="w"></span>
+<div class="highlight-JSX notranslate"><div class="highlight"><pre><span></span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="w"></span>
+<span class="w">  </span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">className</span><span class="o">=</span><span class="s">&quot;App&quot;</span><span class="p">&gt;</span><span class="w"></span>
+<span class="w">    </span><span class="p">&lt;</span><span class="nt">header</span> <span class="na">className</span><span class="o">=</span><span class="s">&quot;App-header&quot;</span><span class="p">&gt;</span><span class="w"></span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="nb">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">elastic_response</span><span class="p">)</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">      </span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;Graph&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span><span class="w"></span>
+<span class="w">    </span><span class="p">&lt;/</span><span class="nt">header</span><span class="p">&gt;</span><span class="w"></span>
+<span class="w">  </span><span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span><span class="w"></span>
+<span class="p">);</span><span class="w"></span>
 </pre></div>
 </div>
 <p>Here is what App.js should end up looking like now:</p>
@@ -152,7 +170,7 @@ need to add that HTML element to our returned JSX:</p>
 
 <span class="w">  </span><span class="nx">useEffect</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="p">(</span><span class="k">async</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;http://localhost:3001&#39;</span><span class="p">);</span><span class="w"></span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;http://localhost:3001/status&#39;</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">elastic_json</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">();</span><span class="w"></span>
 
@@ -192,28 +210,38 @@ need to add that HTML element to our returned JSX:</p>
 <span class="k">export</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="nx">App</span><span class="p">;</span><span class="w"></span>
 </pre></div>
 </div>
-<p>And that’s it! We should now be able to run Elasticsearch, our backend,
-and our frontend app in concert to display a basic request to
+<p>And that’s it for the initial setup! We should now be able to run Elasticsearch,
+our backend, and our frontend app in concert to display a basic request to
 Elasticsearch on our webpage. It is easiest to do this with three
 different terminals:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Terminal 1</span>
-$ ~/elasticsearch-8.3.3/bin/elasticsearch
+$ <span class="nb">cd</span> ~/vre-tutorial/elasticsearch-8.3.3
+$ ./bin/elasticsearch
 </pre></div>
 </div>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Terminal 2</span>
-$ <span class="nb">cd</span> ~/elastic-backend
+$ <span class="nb">cd</span> ~/vre-tutorial/backend
 $ node .
 </pre></div>
 </div>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Terminal 3</span>
-$ <span class="nb">cd</span> ~/elastic-react
+$ <span class="nb">cd</span> ~/vre-tutorial/frontend
 $ npm start
 </pre></div>
 </div>
 <p>The React server should automatically open a new web browser tab
-displaying our web page with simple Vega visuaization! Next we can do
-some work to update the elasticsearch data in real time, which will
-redraw and update our visualisation.</p>
+displaying our web page with a simple Vega Bar Chart!</p>
+<p>If you have any errors, re-start all three applications, in the same order, giving Elasticsearch
+enough time to show a green status before starting the backend. If the issue persits, please open an
+<a class="reference external" href="https://github.com/tcg-digital-us/react-vega-elasticsearch/issues">issue on our GitHub repo</a> and we will try to help.</p>
+<p>Next we can do some work to update the elasticsearch data in real time,
+which will redraw and update our visualisation.</p>
+<section id="resources">
+<h2>Resources<a class="headerlink" href="#resources" title="Permalink to this headline"></a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://vega.github.io/vega-lite/docs/">Vega Grammar Documentation</a></p></li>
+</ul>
+</section>
 </section>
 
 

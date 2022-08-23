@@ -21,13 +21,13 @@ Adds a single document to an index.
   .. code:: javascript
 
      {
-        "name": "index_to_add_to",
-        "data": {
-           "value_1": 40,
-           "value_2": 12,
-           "value_3": 31,
-           ...
-        }
+       "name": "index_to_add_to",
+       "data": {
+         "value_1": 40,
+         "value_2": 12,
+         "value_3": 31,
+         ...
+       }
      }
 
   .. NOTE::
@@ -40,21 +40,23 @@ Adds a single document to an index.
 .. code:: javascript
 
    app.put("/index/docs/add", (req, res) => {
-      const name = req.body.name
-      const data = req.body.data  
 
-      if (!name || !data) {
-         res.json({ "error": "index name and data is a required parameter." })
-      } else {
-         console.log(JSON.stringify(data))
-         client.index({
-            index: name,
-            document: data
-         }).then((resres) => {
-            client.indices.refresh({ index: name })
-            res.json(resres)
-         }).catch((resres) => {
-            res.json(resres)
-         })
-      }
+     const name = req.body.name
+     const data = req.body.data  
+
+     if (!name || !data) {
+       res.json({ "error": "index name and data is a required parameter." })
+     } else {
+       client.index({
+         index: name,
+         document: data
+       }).then((es_res) => {
+
+         // Refresh the index after adding so that it is aware of our changes.
+         client.indices.refresh({ index: name })
+         res.json(es_res)
+       }).catch((es_err) => {
+         res.json(es_err)
+       })
+     }
    })

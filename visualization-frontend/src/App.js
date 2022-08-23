@@ -10,7 +10,7 @@ function App() {
 
   async function getBoxPlotData() {
     var data = []
-    const url = 'http://localhost:3001/index/docs/all?name=penguins'
+    const url = 'http://localhost:3001/index/penguins/docs/all'
     const response = await fetch(url);
     const elastic_json = await response.json();
     elastic_json.forEach((each) => {

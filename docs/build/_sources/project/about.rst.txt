@@ -7,6 +7,8 @@ The goal of this project is to create a single-page web-app using the React fram
 displays an interactive box-and-whiskers data visualization using the Vega visualization 
 grammar with data retrieved from a backend server connected to an Elasticsearch data-store.
 
+.. image:: /project/screenshot.jpg
+
 Throughout the process of working on this project it became apparent that there would be
 many different pieces involved, so we have done the best we can to cover all information
 required.

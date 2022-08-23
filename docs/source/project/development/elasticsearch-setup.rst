@@ -41,9 +41,11 @@ Inside WSL we can run:
 .. code:: bash
 
    $ cd ~/
+   $ mkdir vre_tutorial
+   $ cd vre_tutorial
    $ curl -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.3.3-linux-x86_64.tar.gz
    $ tar -xzvf elasticsearch-8.3.3-linux-x86_64.tar.gz
-   $ cd ~/elasticsearch-8.3.3
+   $ cd elasticsearch-8.3.3
 
 After downloading it, we will run it once to configure it so that we can
 get the password for the default 'elastic' user that is generated after
@@ -94,7 +96,8 @@ CORS/SOP
 
 Upon first successful startup, Elasticsearch populates its configuration file at 
 ``config/elasticsearch.yml``. We can add to this file to set Elasticsearch to 
-allow requests from all origins.
+allow requests from all origins. These changes wont be evaluated until Elasticsearch
+is killed and started again.
 
 .. code:: python
 
@@ -104,6 +107,13 @@ allow requests from all origins.
 
    # and if your cluster uses authorization:
    http.cors.allow-headers: X-Requested-With,Content-Type,Content-Length,Authorization
+
+.. NOTE::
+
+   *Use* ``Ctrl+C`` *to kill Elasticsearch in the command line. It can take a little while
+   to exit gracefully.*
+
+   
 
 .. NOTE:: 
 

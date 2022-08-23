@@ -11,7 +11,7 @@ Imports data of a single type contained inside a JSON file into an Elasticsearch
 
 **Parameters**
 
-* body - An object containing the index name, document type, and filename from
+* body - An object containing the index name, document type (optional), and filename from
   which the data will be uploaded.
 
   e.g.:
@@ -24,7 +24,7 @@ Imports data of a single type contained inside a JSON file into an Elasticsearch
      }
 
 The data that we plan to import is an array of
-JSON objects, and we will assume that currently this is the only data format that we
+JSON objects within ``penguins.json``, and we will assume that currently this is the only data format that we
 will be using to upload. We can import this file as a list of
 documents to add to a penguins index, but to do so we need to manipulate the
 data in a way that makes Elasticsearch's bulk upload function happy.
@@ -65,7 +65,7 @@ Equivalent Elasticsearch CLI API Call:
    ...
    '
 
-In javascript though, the end product we will be providing will look more like this:
+In javascript though, the end product that we will be provide will look more like this:
 
 .. code:: javascript
 
@@ -81,8 +81,8 @@ In javascript though, the end product we will be providing will look more like t
      ...
    ]
 
-By importing the filename as a list of objects, we can use ``.flatMap()`` to 
-map all of the index identifying objects we need to each document, resulting
+By requiring the filename as a list of objects, we can use ``.flatMap()`` to 
+map all of the new index identifying objects to each document, resulting
 in a JSON array that we can provide to Elasticsearch for bulk upload.
 
 **Code**
@@ -102,14 +102,13 @@ in a JSON array that we can provide to Elasticsearch for bulk upload.
      }
 
      const operations = data.flatMap(doc => [json_header, doc])
-     const bulkResponse = await client.bulk({ refresh: true, operations})
+     const bulk_response = await client.bulk({ refresh: true, operations})
 
-     if(bulkResponse.errors) {
-       console.log(bulkResponse.errors)
-       res.send('there was an error')
+     if(bulk_response.errors) {
+       res.json(bulk_response.errors)
      }
 
-     res.send('Finished writing temp file')
+     res.json({ "status": "success" })
    })
 
 ----

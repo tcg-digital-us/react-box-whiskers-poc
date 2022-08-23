@@ -83,7 +83,7 @@
 </div>
 <p><strong>Parameters</strong></p>
 <ul>
-<li><p>body - An object containing the index name, document type, and filename from
+<li><p>body - An object containing the index name, document type (optional), and filename from
 which the data will be uploaded.</p>
 <p>e.g.:</p>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
@@ -95,7 +95,7 @@ which the data will be uploaded.</p>
 </li>
 </ul>
 <p>The data that we plan to import is an array of
-JSON objects, and we will assume that currently this is the only data format that we
+JSON objects within <code class="docutils literal notranslate"><span class="pre">penguins.json</span></code>, and we will assume that currently this is the only data format that we
 will be using to upload. We can import this file as a list of
 documents to add to a penguins index, but to do so we need to manipulate the
 data in a way that makes Elasticsearch’s bulk upload function happy.</p>
@@ -130,7 +130,7 @@ command line equivalent of this API call:</p>
 <span class="s1">&#39;</span>
 </pre></div>
 </div>
-<p>In javascript though, the end product we will be providing will look more like this:</p>
+<p>In javascript though, the end product that we will be provide will look more like this:</p>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="w"></span>
 <span class="w">  </span><span class="p">[</span><span class="w"></span>
 <span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="s2">&quot;index&quot;</span><span class="o">:</span><span class="p">{</span><span class="w"> </span><span class="s2">&quot;_index&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;penguins&quot;</span><span class="p">}</span><span class="w"> </span><span class="p">},</span><span class="w"></span>
@@ -144,8 +144,8 @@ command line equivalent of this API call:</p>
 <span class="p">]</span><span class="w"></span>
 </pre></div>
 </div>
-<p>By importing the filename as a list of objects, we can use <code class="docutils literal notranslate"><span class="pre">.flatMap()</span></code> to
-map all of the index identifying objects we need to each document, resulting
+<p>By requiring the filename as a list of objects, we can use <code class="docutils literal notranslate"><span class="pre">.flatMap()</span></code> to
+map all of the new index identifying objects to each document, resulting
 in a JSON array that we can provide to Elasticsearch for bulk upload.</p>
 <p><strong>Code</strong></p>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">app</span><span class="p">.</span><span class="nx">put</span><span class="p">(</span><span class="s2">&quot;/index/docs/import&quot;</span><span class="p">,</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="w"> </span><span class="nx">res</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -161,14 +161,13 @@ in a JSON array that we can provide to Elasticsearch for bulk upload.</p>
 <span class="w">  </span><span class="p">}</span><span class="w"></span>
 
 <span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">operations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">data</span><span class="p">.</span><span class="nx">flatMap</span><span class="p">(</span><span class="nx">doc</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">[</span><span class="nx">json_header</span><span class="p">,</span><span class="w"> </span><span class="nx">doc</span><span class="p">])</span><span class="w"></span>
-<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">bulkResponse</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">bulk</span><span class="p">({</span><span class="w"> </span><span class="nx">refresh</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="nx">operations</span><span class="p">})</span><span class="w"></span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">bulk_response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">bulk</span><span class="p">({</span><span class="w"> </span><span class="nx">refresh</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="nx">operations</span><span class="p">})</span><span class="w"></span>
 
-<span class="w">  </span><span class="k">if</span><span class="p">(</span><span class="nx">bulkResponse</span><span class="p">.</span><span class="nx">errors</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">bulkResponse</span><span class="p">.</span><span class="nx">errors</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="s1">&#39;there was an error&#39;</span><span class="p">)</span><span class="w"></span>
+<span class="w">  </span><span class="k">if</span><span class="p">(</span><span class="nx">bulk_response</span><span class="p">.</span><span class="nx">errors</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">bulk_response</span><span class="p">.</span><span class="nx">errors</span><span class="p">)</span><span class="w"></span>
 <span class="w">  </span><span class="p">}</span><span class="w"></span>
 
-<span class="w">  </span><span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="s1">&#39;Finished writing temp file&#39;</span><span class="p">)</span><span class="w"></span>
+<span class="w">  </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">({</span><span class="w"> </span><span class="s2">&quot;status&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;success&quot;</span><span class="w"> </span><span class="p">})</span><span class="w"></span>
 <span class="p">})</span><span class="w"></span>
 </pre></div>
 </div>

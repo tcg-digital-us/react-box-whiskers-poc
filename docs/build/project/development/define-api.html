@@ -97,12 +97,11 @@ we can query data from that would be relevant in displaying to a box and
 whiskers graph.</p>
 <p>A freely available dataset that is perfect for our purposes is the
 penguins dataset provided in the <a class="reference external" href="https://github.com/vega/vega-datasets/blob/next/data/penguins.json">vega-datasets repository</a>. A copy of this JSON file is also
-available in the repo under the <code class="docutils literal notranslate"><span class="pre">res</span></code> folder.</p>
+available in the repo under the <code class="docutils literal notranslate"><span class="pre">res</span></code> folder. We will use this data to
+create a box and whiskers plot that shows the variety of Body Mass in grams across multiple
+penguin species.</p>
 <p>Given this, we will be developing some API ends that are required for
-our visualisation, and some others that are just for ease of use. The
-functionalites for ease of use will be denoted as such, and they won’t
-have in-depth explanations (though, feel free to go through their code
-and understand why they do what they do).</p>
+our visualisation, and some others that are just for ease of working with Elasticsearch.</p>
 <section id="demystifying-the-elasticsearch-client">
 <h2>Demystifying the Elasticsearch Client<a class="headerlink" href="#demystifying-the-elasticsearch-client" title="Permalink to this headline"></a></h2>
 <p>Shortly after setting up Elasticsearch and messing around with the client API, it became
@@ -126,7 +125,7 @@ Client API to get the status of an index:</p>
 IDE’s, but if it doesn’t work for you, then I recommend using Visual Studio Code.</em></p>
 </div>
 <ol class="arabic">
-<li><p>Let’s say we wanted to implement a call in <code class="docutils literal notranslate"><span class="pre">server.js</span></code> to get the status of an index:</p>
+<li><p>Let’s say we wanted to implement a call in <code class="docutils literal notranslate"><span class="pre">index.js</span></code> to get the status of an index:</p>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">client</span><span class="p">.</span><span class="nx">indices</span><span class="p">.</span><span class="nx">get</span><span class="p">()</span><span class="w"></span>
 </pre></div>
 </div>
@@ -176,12 +175,12 @@ as an argument with the required index name:</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p><em>This is only for instructinoal purposes. In step two above, we see that the ``get`` function returns a promise so that will
+<p><em>This is only for instructinoal purposes. In step two above, we see that the</em> <code class="docutils literal notranslate"><span class="pre">get()</span></code> <em>function returns a promise so that will
 need to be handled accordingly.</em></p>
 </div>
 </li>
 </ol>
-<p>Now, lets continue on to defining our server API!</p>
+<p>With this in mind, lets continue on to defining our server API!</p>
 <div class="toctree-wrapper compound">
 </div>
 </section>

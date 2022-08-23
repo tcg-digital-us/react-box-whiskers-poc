@@ -44,7 +44,13 @@ the status of the index:
      }
    }'
 
-A summary JSON response should indicate that the call was successful. Now to import the penguins data to our index:
+A summary JSON response should indicate that the call was successful:
+
+.. code:: javascript
+
+   {"acknowledged":true,"shards_acknowledged":true,"index":"penguins"}
+ 
+Now to import the penguins data to our index:
 
 .. code:: bash
 
@@ -54,9 +60,26 @@ A summary JSON response should indicate that the call was successful. Now to imp
      "file": "/path_to_file/penguins.json"
    }'
 
-Another summary response in JSON format should show that the documents were uploaded properly. We can further
-check this by checking the status of the index.
+Another summary response in JSON format should show that the documents were uploaded properly:
+
+.. code:: javascript
+ 
+   { "status": "success" }
+
+We can further check this by checking the count of the index:
 
 .. code:: bash
 
-   $ curl -X GET http://localhost:3001/index/penguins/status
+   $ curl -X GET http://localhost:3001/index/penguins/count
+
+.. code:: javascript
+
+   {
+     "count": 344,
+     "_shards": {
+       "total": 1,
+       "successful": 1,
+       "skipped": 0,
+       "failed": 0
+     }
+   }

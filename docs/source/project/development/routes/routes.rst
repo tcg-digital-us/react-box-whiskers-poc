@@ -12,7 +12,7 @@ worked quickly and easily).
 Finally, and while not specifically necessary, we will want to check the status of an index as well.
 
 Below each API route has been defined, and code has been provided, with explanation where necessary. Each of these
-routes need to be appended to ``server.js`` in the same manner as the ``/status`` route.
+routes need to be appended to ``index.js`` in the same manner as the ``/status`` route.
 
 .. contents:: Minimal API Routes to Define:
    :local:

@@ -139,14 +139,17 @@ const require = createRequire(import.meta.url);
 const { Client } = require('@elastic/elasticsearch');
 const fs = require('fs');
 
+// const password = 'ETqghg4gGz7Ocxq2Z1Nk'
+const password = 'Mi-k86jL1=uK8y8vj=Rc'
+
 const client = new Client({
   node: 'https://localhost:9200',
   auth: {
     username: 'elastic',
-    password: 'ETqghg4gGz7Ocxq2Z1Nk'
+    password: password
   },
   tls: { // This is necessary for defining where elasticsearch's self-signed certs are at
-    ca: fs.readFileSync('/home/donchocheese/tcg-digital/elasticsearch-8.3.3/config/certs/http_ca.crt'),
+    ca: fs.readFileSync('/home/donchocheese/tcg-digital/react-vega-elasticsearch/elasticsearch-8.3.3/config/certs/http_ca.crt'),
     rejectUnauthorized: false
   }
 })
@@ -178,11 +181,11 @@ app.put("/index/new", (req, res) => {
   }
 })
 
-app.get("/index/:name/status", (req, res) => {
+app.get("/index/:name/count", (req, res) => {
   if (!req.params.name) {
     res.json({ "error": "index name is a required parameter." })
   } else {
-    client.indices.get({
+    client.count({
       index: req.params.name
     }).then((resres) => {
       res.json(resres)

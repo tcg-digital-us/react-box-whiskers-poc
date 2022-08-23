@@ -2,14 +2,14 @@
 Create a Basic NodeJS Elasticsearch Backend
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We now can set up a backend that provides api routes that we can use to
+We now can set up a backend that provides a single API route that we can use to
 interact with kibana.
 
 .. code:: bash
 
-   $ cd ~/
-   $ mkdir elastic-backend
-   $ cd ./elastic-backend
+   $ cd ~/vre-tutorial
+   $ mkdir backend
+   $ cd backend
    $ npm init -y
 
 To ensure that the project will be run as an es6 module, we need to add
@@ -21,9 +21,9 @@ type is defined (it just has to be defined at the same indent level as
 .. code:: javascript
 
    {
-     "name": "elastic-backend",
+     "name": "backend",
      ...
-     "type": "module"
+     "type": "module",
      ...
    }
 
@@ -35,7 +35,7 @@ around same-origin policy, we will use the cors module.
 
    $ npm install express cors @elastic/elasticsearch
 
-Now, in a new file, 'index.js', we can begin to put our backend together
+Now, in a new file, ``index.js``, we can begin to put our backend together
 by importing some of our es6 modules:
 
 .. code:: javascript
@@ -54,7 +54,9 @@ module and use it to require the other libraries we need:
    const require = createRequire(import.meta.url);
 
    const { Client } = require('@elastic/elasticsearch');
-   const fs = require('fs'); // for loading local files
+
+   // For loading local files
+   const fs = require('fs');
 
 We can now create a new Elasticsearch connection client:
 
@@ -62,21 +64,24 @@ We can now create a new Elasticsearch connection client:
 
    const url = 'https://localhost:9200';
    const user = 'elastic';
+
    // Change this to the password you copied from earlier.
    const pass = '';
+
    // Update with username with elasticsearch installed.
    const credential = '/home/{username}/elasticsearch-8.3.3/config/certs/http_ca.crt';
 
+   // Use Elasticsearch's self-signed certs for tls:ca.
    const client = new Client({
-       node: url,
-       auth: {
-         username: user,
-         password: pass
-       },
-       tls: { // Use Elasticsearch's self-signed certs.
-         ca: fs.readFileSync(credential),
-         rejectUnauthorized: false
-       }
+     node: url,
+     auth: {
+       username: user,
+       password: pass
+     },
+     tls: {
+       ca: fs.readFileSync(credential),
+       rejectUnauthorized: false
+     }
    });
 
 Now we can begin to develop our server application using Express. First
@@ -88,19 +93,21 @@ required to bypass SOP issues.
    const app = Express();
    app.use(cors());
 
-Next, we will add a single route to our application that will return to
-a generic JSON response from Elasticsearch:
+Next, we will add a single route to our application that will return 
+a JSON response from Elasticsearch:
 
 .. code:: javascript
 
    app.get("/status", async (req, res) => {
      client.cluster.health().then((es_res) => {
        res.json(es_res);
-     });
+     }).catch((es_err) => {
+       res.json(es_err)
+     })
    });
 
-Finally, we will add our listener and set it on port 3001, given our
-React application will be running on 3000:
+Finally, we will add a listener for incoming requests and set it on port 3001,
+given our eact application will be running on 3000:
 
 .. code:: javascript
 
@@ -108,7 +115,7 @@ React application will be running on 3000:
      console.log('listening on port 3001!');
    });
 
-Here is what we should end up with in index.js:
+Here is what we should end up with in ``index.js``:
 
 .. code:: javascript
 
@@ -126,28 +133,30 @@ Here is what we should end up with in index.js:
    const credential = '/home/{username}/elasticsearch-8.3.3/config/certs/http_ca.crt';
 
    const client = new Client({
-       node: url,
-       auth: {
-         username: user,
-         password: pass
-       },
-       tls: {
-         ca: fs.readFileSync(credential),
-         rejectUnauthorized: false
-       }
+     node: url,
+     auth: {
+       username: user,
+       password: pass
+     },
+     tls: {
+       ca: fs.readFileSync(credential),
+       rejectUnauthorized: false
+     }
    });
 
    const app = Express();
    app.use(cors());
 
    app.get("/status", async (req, res) => {
-       client.cluster.health().then((resres) => {
-           res.json(resres);
-       })
+     client.cluster.health().then((resres) => {
+       res.json(resres);
+     }).catch((es_err) => {
+       res.json(es_err)
+     })
    })
 
    app.listen(3001, () => {
-       console.log("listening on port 3001");
+     console.log("listening on port 3001");
    })
 
 This wraps it up for the backend! Later more routes can be added, but

@@ -85,32 +85,55 @@
 <h1>Create A Basic React application<a class="headerlink" href="#create-a-basic-react-application" title="Permalink to this headline"></a></h1>
 <p>Now for the React site itself. to get started, we will use npm to create
 a new React app:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> ~/
-$ mkdir elastic-react
-$ <span class="nb">cd</span> ./elastic-react
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> ~/vre-tutorial
+$ mkdir frontend
+$ <span class="nb">cd</span> frontend
 $ npx create-react-app . -y
 </pre></div>
 </div>
 <p>No other modules are needed thankfully, so we can go ahead and begin
-editing our React app in App.js (first delete the contents of the App
-function). We want to keep it simple, we only need to display the
-returned JSON, so to start off we will create a very simple return that
+editing our React app in <code class="docutils literal notranslate"><span class="pre">src/App.js</span></code>, the first order of business being
+to delete the entire contents of the App function that <code class="docutils literal notranslate"><span class="pre">create-react-app</span></code>
+generated for us.</p>
+<p>We want to keep it simple. We need to display the JSON data returned from our backend
+<code class="docutils literal notranslate"><span class="pre">/status</span></code> call as a string, so to start off we will create a very simple return that
 displays the stringified response we will be getting from Elasticsearch:</p>
 <div class="highlight-JSX notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span><span class="w"> </span><span class="nx">App</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">className</span><span class="o">=</span><span class="s">&quot;App&quot;</span><span class="p">&gt;</span><span class="w"></span>
 <span class="w">      </span><span class="p">&lt;</span><span class="nt">header</span> <span class="na">className</span><span class="o">=</span><span class="s">&quot;App-header&quot;</span><span class="p">&gt;</span><span class="w"></span>
-<span class="w">        </span><span class="p">{</span><span class="nb">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">elastic_response</span><span class="p">)}</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"> </span><span class="nb">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">elastic_response</span><span class="p">)</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
 <span class="w">      </span><span class="p">&lt;/</span><span class="nt">header</span><span class="p">&gt;</span><span class="w"></span>
 <span class="w">    </span><span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span><span class="w"></span>
 <span class="w">  </span><span class="p">);</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><em>The className’s that you see here have already been defined
+by</em> <code class="docutils literal notranslate"><span class="pre">create-react-app</span></code> <em>in the</em> <code class="docutils literal notranslate"><span class="pre">src/App.css</span></code> <em>file.</em></p>
+</div>
+<p>Calls made to a backend are asynchronous in nature, as after making the fetch
+you must wait on the backend to respond. It makes sense then that when the
+App module first loads, the elastic_response variable will be undefined and will
+display nothing on our page until our fetch call is completed. Once the call is
+complete, we will want to set <code class="docutils literal notranslate"><span class="pre">elastic_response</span></code>, and we will
+want its stringified value to be displayed in our view.</p>
+<p>React makes this easy to accomplish by using states to keep track of the variables
+whose changes we want to refresh our module or to cause other code to execute. We
+need to import this state functionality (since many imports are available at the
+<code class="docutils literal notranslate"><span class="pre">'react'</span></code> level, we need to surround it in brackets):</p>
+<div class="highlight-JSX notranslate"><div class="highlight"><pre><span></span><span class="p">...</span><span class="w"></span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">useState</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;react&#39;</span><span class="w"></span>
+<span class="p">...</span><span class="w"></span>
+</pre></div>
+</div>
 <p>We will provide a state to keep track of the Elasticsearch response so
 that every time the response changes our module is re-rendered:</p>
 <div class="highlight-JSX notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span><span class="w"> </span><span class="nx">App</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="c1">// Initialize the response to an empty JSON object.</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// Initialize the response to an empty JSON object so that it</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// doesnt get initialized as undefined.</span><span class="w"></span>
 <span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="nx">elastic_response</span><span class="p">,</span><span class="w"> </span><span class="nx">setElasticResponse</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useState</span><span class="p">({});</span><span class="w"></span>
 
 <span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="w"></span>
@@ -126,11 +149,26 @@ that every time the response changes our module is re-rendered:</p>
 <p>Next, we will add a single effect to the App module that will run once
 upon loading the module. This will make a fetch request to the backend
 we set up earlier so that we can set the elastic_response state to the
-response, causing the module to re-render with the appropriate info:</p>
+response we get from Elasticsearch, causing the module to re-render
+with the appropriate info. First we import the effect functionality from <code class="docutils literal notranslate"><span class="pre">'react'</span></code>
+alongside our <code class="docutils literal notranslate"><span class="pre">useState</span></code> import :</p>
+<div class="highlight-JSX notranslate"><div class="highlight"><pre><span></span><span class="p">...</span><span class="w"></span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">useState</span><span class="p">,</span><span class="w"> </span><span class="nx">useEffect</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;react&#39;</span><span class="w"></span>
+<span class="p">...</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Now we can develop our effect that defines and runs an asynchronous function.</p>
 <div class="highlight-JSX notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span><span class="w"> </span><span class="nx">App</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="nx">elastic_response</span><span class="p">,</span><span class="w"> </span><span class="nx">setElasticResponse</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useState</span><span class="p">({});</span><span class="w"></span>
 
+<span class="w">  </span><span class="c1">// useEffect requires two arguments, the function to be run, and</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// the dependency array to which the effect applies. This dependency</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// array is simply a list of the states that once changed will cause</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// this code to re-evaluate. In this case, an empty dependncy array</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// causes the effect to run only once, when our module is initially</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// attached to the application.</span><span class="w"></span>
 <span class="w">  </span><span class="nx">useEffect</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+
 <span class="w">    </span><span class="c1">// Here we are defining and running an anonymous function</span><span class="w"></span>
 <span class="w">    </span><span class="c1">// since only function objects can be provided to useEffect,</span><span class="w"></span>
 <span class="w">    </span><span class="c1">// not promises, and we need to wait for the backend to respond.</span><span class="w"></span>
@@ -141,8 +179,7 @@ response, causing the module to re-render with the appropriate info:</p>
 <span class="w">      </span><span class="c1">// Set the elastic_response state using the setter provided.</span><span class="w"></span>
 <span class="w">      </span><span class="nx">setElasticResponse</span><span class="p">(</span><span class="nx">elastic_json</span><span class="p">);</span><span class="w"></span>
 <span class="w">    </span><span class="p">})();</span><span class="w"></span>
-<span class="w">  </span><span class="p">},</span><span class="w"> </span><span class="p">[]);</span><span class="w"> </span><span class="c1">// An empty dependncy array causes the effect to run</span><span class="w"></span>
-<span class="w">  </span><span class="c1">//only once, when our module is initially attached to the application.</span><span class="w"></span>
+<span class="w">  </span><span class="p">},</span><span class="w"> </span><span class="p">[]);</span><span class="w"></span>
 
 <span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">className</span><span class="o">=</span><span class="s">&quot;App&quot;</span><span class="p">&gt;</span><span class="w"></span>
@@ -154,9 +191,16 @@ response, causing the module to re-render with the appropriate info:</p>
 <span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><em>Make sure that your</em> <code class="docutils literal notranslate"><span class="pre">useEffect()</span></code> <em>call takes both the function and dependency
+array arguments -&gt;</em> <code class="docutils literal notranslate"><span class="pre">useEffect(()</span> <span class="pre">=&gt;</span> <span class="pre">{},</span> <span class="pre">[])</span></code> <em>.</em></p>
+<p><em>Also ensure that the anonymous function within</em> <code class="docutils literal notranslate"><span class="pre">useEffect()</span></code> <em>ends in</em> <code class="docutils literal notranslate"><span class="pre">()</span></code> <em>so
+that the function is run where we have defined it</em> <code class="docutils literal notranslate"><span class="pre">(()</span> <span class="pre">=&gt;</span> <span class="pre">{</span> <span class="pre">return;</span> <span class="pre">})()</span></code> <em>.</em></p>
+</div>
 <p>We should now be at a point now where if we ran everything we have setup
 thus far, we would have a React webpage that displays the JSON returned
-from Elasticsearch. We can take this a little further now with Vega to
+from Elasticsearch, but We can take this a little further now with Vega to
 create a very basic visualisation that is based off of Elasticsearch
 data.</p>
 </section>

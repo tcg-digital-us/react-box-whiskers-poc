@@ -86,21 +86,20 @@
 <p>Now to start mucking around with the fun stuff. Last we left off the front end looked something like this:</p>
 <div class="highlight-JSX notranslate"><div class="highlight"><pre><span></span><span class="k">import</span><span class="w"> </span><span class="nx">logo</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;./logo.svg&#39;</span><span class="p">;</span><span class="w"></span>
 <span class="k">import</span><span class="w"> </span><span class="s1">&#39;./App.css&#39;</span><span class="p">;</span><span class="w"></span>
-<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">useState</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;react&#39;</span><span class="p">;</span><span class="w"></span>
-<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">useEffect</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;react&#39;</span><span class="p">;</span><span class="w"></span>
-<span class="k">import</span><span class="w"> </span><span class="nx">vegaEmbed</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;vega-embed&#39;</span><span class="p">;</span><span class="w"></span>
+
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">useState</span><span class="p">,</span><span class="w"> </span><span class="nx">useEffect</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;react&#39;</span><span class="w"></span>
+<span class="k">import</span><span class="w"> </span><span class="nx">vegaEmbed</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;vega-embed&#39;</span><span class="w"></span>
 
 <span class="kd">function</span><span class="w"> </span><span class="nx">App</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 
-<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="nx">elastic_response</span><span class="p">,</span><span class="w"> </span><span class="nx">setElasticResponse</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useState</span><span class="p">({});</span><span class="w"></span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="nx">elastic_response</span><span class="p">,</span><span class="w"> </span><span class="nx">setElasticResponse</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useState</span><span class="p">({})</span><span class="w"></span>
 
 <span class="w">  </span><span class="nx">useEffect</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="p">(</span><span class="k">async</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;http://localhost:3001&#39;</span><span class="p">);</span><span class="w"></span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;http://localhost:3001/status&#39;</span><span class="p">)</span><span class="w"></span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">elastic_json</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">()</span><span class="w"></span>
 
-<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">elastic_json</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">();</span><span class="w"></span>
-
-<span class="w">      </span><span class="kd">let</span><span class="w"> </span><span class="nx">yourVlSpec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="kd">let</span><span class="w"> </span><span class="nx">bar_graph_spec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nx">$schema</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;https://vega.github.io/schema/vega-lite/v5.json&#39;</span><span class="p">,</span><span class="w"></span>
 <span class="w">        </span><span class="nx">description</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;A simple bar chart with embedded data.&#39;</span><span class="p">,</span><span class="w"></span>
 <span class="w">        </span><span class="nx">data</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -117,11 +116,11 @@
 <span class="w">        </span><span class="p">}</span><span class="w"></span>
 <span class="w">      </span><span class="p">};</span><span class="w"></span>
 
-<span class="w">      </span><span class="nx">vegaEmbed</span><span class="p">(</span><span class="s1">&#39;#Graph&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">yourVlSpec</span><span class="p">);</span><span class="w"></span>
+<span class="w">      </span><span class="nx">vegaEmbed</span><span class="p">(</span><span class="s1">&#39;#Graph&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">bar_graph_spec</span><span class="p">)</span><span class="w"></span>
 
-<span class="w">      </span><span class="nx">setElasticResponse</span><span class="p">(</span><span class="nx">elastic_json</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="p">})();</span><span class="w"></span>
-<span class="w">  </span><span class="p">},</span><span class="w"> </span><span class="p">[]);</span><span class="w"></span>
+<span class="w">      </span><span class="nx">setElasticResponse</span><span class="p">(</span><span class="nx">elastic_json</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">})()</span><span class="w"></span>
+<span class="w">  </span><span class="p">},</span><span class="w"> </span><span class="p">[])</span><span class="w"></span>
 
 <span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">className</span><span class="o">=</span><span class="s">&quot;App&quot;</span><span class="p">&gt;</span><span class="w"></span>
@@ -130,14 +129,16 @@
 <span class="w">        </span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;Graph&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span><span class="w"></span>
 <span class="w">      </span><span class="p">&lt;/</span><span class="nt">header</span><span class="p">&gt;</span><span class="w"></span>
 <span class="w">    </span><span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span><span class="w"></span>
-<span class="w">  </span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="p">)</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
+
+<span class="k">export</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="nx">App</span><span class="p">;</span><span class="w"></span>
 </pre></div>
 </div>
 <p>We used an effect without dependencies (by putting nothing in the <code class="docutils literal notranslate"><span class="pre">[]</span></code>) to fetch the status of our elasticsearch instance
 as soon as the module loads, drew a bar graph with that data, and then we set the <code class="docutils literal notranslate"><span class="pre">elastic_response</span></code> state to the response’s json
 using the setter function <code class="docutils literal notranslate"><span class="pre">setElasticResponse()</span></code> provided by <code class="docutils literal notranslate"><span class="pre">useState()</span></code>. Once the state has changed, the
-module will refresh, displaying a graphical reprisentation of the current Elasticsearch nodes status.</p>
+module will refresh, displaying a graphical representation of Elasticsearch’s current node status.</p>
 <p>We know in the grand scheme of things that we want to display a graph and a form. When the App module is first loaded,
 it should make the calls necessary to get the list of documents that make up the penguins index from elasticsearch and display it to a box-and-whiskers plot.</p>
 <p>When the form is submitted, we want to send the data in that form to our backend. Once that has finished, we want
@@ -147,7 +148,7 @@ displays that data to the plot.</p>
 response from each fetch call inside a single state, so this way when the last successful response changes we know
 our index has been updated and our module should reload.</p>
 <p>This just requires we modify our state name. and we will also remove our previous graph drawing and state
-setting calls from the effect, as well as the stringified response from the JSX returned:</p>
+setting calls from the effect, as well as the stringified response from App’s JSX returned:</p>
 <div class="highlight-JSX notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span><span class="w"> </span><span class="nx">App</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 
 <span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="nx">last_elastic_response</span><span class="p">,</span><span class="w"> </span><span class="nx">setLastElasticResponse</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useState</span><span class="p">({});</span><span class="w"></span>
@@ -300,7 +301,7 @@ available. For our purposes, I will provide the specification with a comment exp
 the data that you provide as values. Note the field</em> <code class="docutils literal notranslate"><span class="pre">Body</span> <span class="pre">Mass</span> <span class="pre">(g)</span></code> <em>which is exactly as it is listed
 in our data.</em></p>
 </div>
-<p>Now, if we put it all together, we should have an empty graph that is generated with the data that we uploaded
+<p>Now, if we put it all together, we should have a box-and-whiskers graph that is generated with the data that we uploaded
 to the Elasticsearch penguins index.</p>
 <div class="highlight-JSX notranslate"><div class="highlight"><pre><span></span><span class="k">import</span><span class="w"> </span><span class="nx">logo</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;./logo.svg&#39;</span><span class="p">;</span><span class="w"></span>
 <span class="k">import</span><span class="w"> </span><span class="s1">&#39;./App.css&#39;</span><span class="p">;</span><span class="w"></span>

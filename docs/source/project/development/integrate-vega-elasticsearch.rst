@@ -8,21 +8,20 @@ Now to start mucking around with the fun stuff. Last we left off the front end l
 
    import logo from './logo.svg';
    import './App.css';
-   import { useState } from 'react';
-   import { useEffect } from 'react';
-   import vegaEmbed from 'vega-embed';
+
+   import { useState, useEffect } from 'react'
+   import vegaEmbed from 'vega-embed'
 
    function App() {
 
-     const [ elastic_response, setElasticResponse ] = useState({});
+     const [elastic_response, setElasticResponse ] = useState({})
 
      useEffect(() => {
        (async () => {
-         const response = await fetch('http://localhost:3001');
+         const response = await fetch('http://localhost:3001/status')
+         const elastic_json = await response.json()
 
-         const elastic_json = await response.json();
-
-         let yourVlSpec = {
+         let bar_graph_spec = {
            $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
            description: 'A simple bar chart with embedded data.',
            data: {
@@ -38,12 +37,12 @@ Now to start mucking around with the fun stuff. Last we left off the front end l
              y: {field: 'Count', type: 'quantitative'}
            }
          };
-         
-         vegaEmbed('#Graph', yourVlSpec);
 
-         setElasticResponse(elastic_json);
-       })();
-     }, []);
+         vegaEmbed('#Graph', bar_graph_spec)
+
+         setElasticResponse(elastic_json)
+       })()
+     }, [])
 
      return (
        <div className="App">
@@ -52,13 +51,15 @@ Now to start mucking around with the fun stuff. Last we left off the front end l
            <div id="Graph"></div>
          </header>
        </div>
-     );
+     )
    }
+
+   export default App;
 
 We used an effect without dependencies (by putting nothing in the ``[]``) to fetch the status of our elasticsearch instance
 as soon as the module loads, drew a bar graph with that data, and then we set the ``elastic_response`` state to the response's json 
 using the setter function ``setElasticResponse()`` provided by ``useState()``. Once the state has changed, the
-module will refresh, displaying a graphical reprisentation of the current Elasticsearch nodes status.
+module will refresh, displaying a graphical representation of Elasticsearch's current node status.
 
 We know in the grand scheme of things that we want to display a graph and a form. When the App module is first loaded,
 it should make the calls necessary to get the list of documents that make up the penguins index from elasticsearch and display it to a box-and-whiskers plot.
@@ -72,7 +73,7 @@ response from each fetch call inside a single state, so this way when the last s
 our index has been updated and our module should reload.
 
 This just requires we modify our state name. and we will also remove our previous graph drawing and state 
-setting calls from the effect, as well as the stringified response from the JSX returned:
+setting calls from the effect, as well as the stringified response from App's JSX returned:
 
 .. code:: JSX
    :force:
@@ -237,7 +238,7 @@ available. For our purposes, I will provide the specification with a comment exp
    the data that you provide as values. Note the field* ``Body Mass (g)`` *which is exactly as it is listed
    in our data.*
 
-Now, if we put it all together, we should have an empty graph that is generated with the data that we uploaded
+Now, if we put it all together, we should have a box-and-whiskers graph that is generated with the data that we uploaded
 to the Elasticsearch penguins index.
 
 .. code:: JSX

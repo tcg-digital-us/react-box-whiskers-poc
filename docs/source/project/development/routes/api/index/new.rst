@@ -13,7 +13,7 @@ Creates a new index given the provided index schema.
 **Parameters:**
 
 * body - Specification for creating a new index. The provided object should comply
-  with the IndicesCreateRequest type defined within the client API.
+  with the IndicesCreateRequest type argument defined for ``client.indices.create()`` within the client API.
 
   e.g.:
   
@@ -44,16 +44,16 @@ Creates a new index given the provided index schema.
 .. code:: javascript
 
    app.put("/index/new", (req, res) => {
+   
      const spec = req.body 
  
      if (!spec) {
        res.json({ "error": "spec is a required parameter." })
      } else {
-       client.indices.create(spec)
-         .then((resres) => {
-           res.json(resres)
-         }).catch((resres) => {
-           res.json(resres)
-         })
+       client.indices.create(spec).then((es_res) => {
+         res.json(es_res)
+       }).catch((es_err) => {
+         res.json(es_err)
+       })
      }
    })
