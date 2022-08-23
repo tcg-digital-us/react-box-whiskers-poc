@@ -22,7 +22,7 @@ that we can get info from the elastic_json data that was returned and
 build our graph with it. The scehma provided is a basic bar graph schema
 provided by Vega.
 
-.. code:: javascript
+.. code:: JSX
 
      useEffect(() => {
        (async () => {
@@ -55,7 +55,7 @@ provided by Vega.
 Since we set Vega to embed under an HTML element with id 'Graph', we
 need to add that HTML element to our returned JSX:
 
-.. code:: javascript
+.. code:: JSX
    :force:
 
      return (
@@ -69,7 +69,7 @@ need to add that HTML element to our returned JSX:
 
 Here is what App.js should end up looking like now:
 
-.. code:: javascript
+.. code:: JSX
    :force:
 
    import logo from './logo.svg';

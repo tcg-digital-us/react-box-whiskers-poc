@@ -4,4 +4,8 @@ ______
 
 .. code::
 
-   /index/status
+   GET: /index/{index_name}/status
+
+Parameters:
+
+* index_name [string] - Name of index whose status will be fetched.

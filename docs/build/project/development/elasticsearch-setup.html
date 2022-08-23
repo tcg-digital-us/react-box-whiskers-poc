@@ -7,6 +7,9 @@
   <title>Download and Manage an Elasticsearch Instance &mdash; react-vega-elasticsearch  documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/panels-bootstrap.5fd3999ee7762ccc51105388f4a9d115.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -14,7 +17,6 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -38,14 +40,18 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Tutorial:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="../development.html">Development</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Download and Manage an Elasticsearch Instance</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Download and Manage an Elasticsearch Instance</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#cors-sop">CORS/SOP</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="create-backend.html">Create a Basic NodeJS Elasticsearch Backend</a></li>
 <li class="toctree-l2"><a class="reference internal" href="create-react.html">Create A Basic React application</a></li>
 <li class="toctree-l2"><a class="reference internal" href="create-vega.html">Create a Vega Visuialisation in React</a></li>
 <li class="toctree-l2"><a class="reference internal" href="define-api.html">Further Define the Backend API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="load-data.html">Loading Datasets Into Elasticsearch</a></li>
 <li class="toctree-l2"><a class="reference internal" href="integrate-vega-elasticsearch.html">Incorporate Real-Time Elasticsearch Data Into Vega Visualisation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="vega-form.html">Develop Form For Data Submission and Integration Into Refreshed Vega Visualisation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="final-touches.html">CSS Styling and Cleaning Up</a></li>
@@ -79,7 +85,7 @@
            <div itemprop="articleBody">
              
   <section id="download-and-manage-an-elasticsearch-instance">
-<h1>Download and Manage an Elasticsearch Instance<a class="headerlink" href="#download-and-manage-an-elasticsearch-instance" title="Permalink to this heading"></a></h1>
+<h1>Download and Manage an Elasticsearch Instance<a class="headerlink" href="#download-and-manage-an-elasticsearch-instance" title="Permalink to this headline"></a></h1>
 <p>At the time of writing this, the current binary version of Elasticsearch
 available is v8.3.3. The platform download variants available are:</p>
 <center><table class="docutils align-default">
@@ -163,9 +169,31 @@ ouptut similar to this below:</p>
 </div>
 <p>Copy the ‘password for the elastic user’ and save it somewhere because
 we will need it again later.</p>
-<p><strong>Note:</strong> <em>The password for the elastic user is only shown once upon
-initial startup, so make sure you write it down!</em></p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p><em>The password for the elastic user is only shown once upon initial startup, so make sure you write it down!</em></p>
+</div>
+<section id="cors-sop">
+<h2>CORS/SOP<a class="headerlink" href="#cors-sop" title="Permalink to this headline"></a></h2>
+<p>Upon first successful startup, Elasticsearch populates its configuration file at
+<code class="docutils literal notranslate"><span class="pre">config/elasticsearch.yml</span></code>. We can add to this file to set Elasticsearch to
+allow requests from all origins.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># allow CORS requests from https://app.elasticvue.com</span>
+<span class="n">http</span><span class="o">.</span><span class="n">cors</span><span class="o">.</span><span class="n">enabled</span><span class="p">:</span> <span class="n">true</span>
+<span class="n">http</span><span class="o">.</span><span class="n">cors</span><span class="o">.</span><span class="n">allow</span><span class="o">-</span><span class="n">origin</span><span class="p">:</span> <span class="s2">&quot;*&quot;</span>
+
+<span class="c1"># and if your cluster uses authorization:</span>
+<span class="n">http</span><span class="o">.</span><span class="n">cors</span><span class="o">.</span><span class="n">allow</span><span class="o">-</span><span class="n">headers</span><span class="p">:</span> <span class="n">X</span><span class="o">-</span><span class="n">Requested</span><span class="o">-</span><span class="n">With</span><span class="p">,</span><span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">,</span><span class="n">Content</span><span class="o">-</span><span class="n">Length</span><span class="p">,</span><span class="n">Authorization</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you haven’t heard of Same-Origin Policiy, or Cross Origin Resource Sharing,
+you should dedicate some time to understanding both, as it can be the source
+of headache and misery for many a new developer.</p>
+</div>
 <center><center></section>
+</section>
 
 
            </div>

@@ -25,7 +25,7 @@ __ Next_
 ----
 
 .. toctree::
-   :maxdepth: 5
-   :caption: Contents:
+   :maxdepth: 10
+   :caption: Tutorial:
 
    project/development

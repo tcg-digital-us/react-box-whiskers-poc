@@ -7,6 +7,9 @@
   <title>Incorporate Real-Time Elasticsearch Data Into Vega Visualisation &mdash; react-vega-elasticsearch  documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/panels-bootstrap.5fd3999ee7762ccc51105388f4a9d115.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -14,13 +17,12 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Develop Form For Data Submission and Integration Into Refreshed Vega Visualisation" href="vega-form.html" />
-    <link rel="prev" title="Further Define the Backend API" href="define-api.html" /> 
+    <link rel="prev" title="Loading Datasets Into Elasticsearch" href="load-data.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -38,7 +40,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Tutorial:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="../development.html">Development</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="elasticsearch-setup.html">Download and Manage an Elasticsearch Instance</a></li>
@@ -46,6 +48,7 @@
 <li class="toctree-l2"><a class="reference internal" href="create-react.html">Create A Basic React application</a></li>
 <li class="toctree-l2"><a class="reference internal" href="create-vega.html">Create a Vega Visuialisation in React</a></li>
 <li class="toctree-l2"><a class="reference internal" href="define-api.html">Further Define the Backend API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="load-data.html">Loading Datasets Into Elasticsearch</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Incorporate Real-Time Elasticsearch Data Into Vega Visualisation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="vega-form.html">Develop Form For Data Submission and Integration Into Refreshed Vega Visualisation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="final-touches.html">CSS Styling and Cleaning Up</a></li>
@@ -79,14 +82,306 @@
            <div itemprop="articleBody">
              
   <section id="incorporate-real-time-elasticsearch-data-into-vega-visualisation">
-<h1>Incorporate Real-Time Elasticsearch Data Into Vega Visualisation<a class="headerlink" href="#incorporate-real-time-elasticsearch-data-into-vega-visualisation" title="Permalink to this heading"></a></h1>
+<h1>Incorporate Real-Time Elasticsearch Data Into Vega Visualisation<a class="headerlink" href="#incorporate-real-time-elasticsearch-data-into-vega-visualisation" title="Permalink to this headline"></a></h1>
+<p>Now to start mucking around with the fun stuff. Last we left off the front end looked something like this:</p>
+<div class="highlight-JSX notranslate"><div class="highlight"><pre><span></span><span class="k">import</span><span class="w"> </span><span class="nx">logo</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;./logo.svg&#39;</span><span class="p">;</span><span class="w"></span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;./App.css&#39;</span><span class="p">;</span><span class="w"></span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">useState</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;react&#39;</span><span class="p">;</span><span class="w"></span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">useEffect</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;react&#39;</span><span class="p">;</span><span class="w"></span>
+<span class="k">import</span><span class="w"> </span><span class="nx">vegaEmbed</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;vega-embed&#39;</span><span class="p">;</span><span class="w"></span>
+
+<span class="kd">function</span><span class="w"> </span><span class="nx">App</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="nx">elastic_response</span><span class="p">,</span><span class="w"> </span><span class="nx">setElasticResponse</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useState</span><span class="p">({});</span><span class="w"></span>
+
+<span class="w">  </span><span class="nx">useEffect</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="p">(</span><span class="k">async</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;http://localhost:3001&#39;</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">elastic_json</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">      </span><span class="kd">let</span><span class="w"> </span><span class="nx">yourVlSpec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="nx">$schema</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;https://vega.github.io/schema/vega-lite/v5.json&#39;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nx">description</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;A simple bar chart with embedded data.&#39;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nx">data</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">          </span><span class="nx">values</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="w"></span>
+<span class="w">            </span><span class="p">{</span><span class="nx">Metric</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;Nodes&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">Count</span><span class="o">:</span><span class="w"> </span><span class="nx">elastic_json</span><span class="p">.</span><span class="nx">number_of_nodes</span><span class="p">},</span><span class="w"></span>
+<span class="w">            </span><span class="p">{</span><span class="nx">Metric</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;Data Nodes&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">Count</span><span class="o">:</span><span class="w"> </span><span class="nx">elastic_json</span><span class="p">.</span><span class="nx">number_of_data_nodes</span><span class="p">},</span><span class="w"></span>
+<span class="w">            </span><span class="p">{</span><span class="nx">Metric</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;Active Primary Shards&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">Count</span><span class="o">:</span><span class="w"> </span><span class="nx">elastic_json</span><span class="p">.</span><span class="nx">active_primary_shards</span><span class="p">}</span><span class="w"></span>
+<span class="w">          </span><span class="p">]</span><span class="w"></span>
+<span class="w">        </span><span class="p">},</span><span class="w"></span>
+<span class="w">        </span><span class="nx">mark</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;bar&#39;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nx">encoding</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">          </span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="nx">field</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;Metric&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">type</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;ordinal&#39;</span><span class="p">},</span><span class="w"></span>
+<span class="w">          </span><span class="nx">y</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="nx">field</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;Count&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">type</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;quantitative&#39;</span><span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">      </span><span class="p">};</span><span class="w"></span>
+
+<span class="w">      </span><span class="nx">vegaEmbed</span><span class="p">(</span><span class="s1">&#39;#Graph&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">yourVlSpec</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">      </span><span class="nx">setElasticResponse</span><span class="p">(</span><span class="nx">elastic_json</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">})();</span><span class="w"></span>
+<span class="w">  </span><span class="p">},</span><span class="w"> </span><span class="p">[]);</span><span class="w"></span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">className</span><span class="o">=</span><span class="s">&quot;App&quot;</span><span class="p">&gt;</span><span class="w"></span>
+<span class="w">      </span><span class="p">&lt;</span><span class="nt">header</span> <span class="na">className</span><span class="o">=</span><span class="s">&quot;App-header&quot;</span><span class="p">&gt;</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"> </span><span class="nb">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">elastic_response</span><span class="p">)</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;Graph&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span><span class="w"></span>
+<span class="w">      </span><span class="p">&lt;/</span><span class="nt">header</span><span class="p">&gt;</span><span class="w"></span>
+<span class="w">    </span><span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span><span class="w"></span>
+<span class="w">  </span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>We used an effect without dependencies (by putting nothing in the <code class="docutils literal notranslate"><span class="pre">[]</span></code>) to fetch the status of our elasticsearch instance
+as soon as the module loads, drew a bar graph with that data, and then we set the <code class="docutils literal notranslate"><span class="pre">elastic_response</span></code> state to the response’s json
+using the setter function <code class="docutils literal notranslate"><span class="pre">setElasticResponse()</span></code> provided by <code class="docutils literal notranslate"><span class="pre">useState()</span></code>. Once the state has changed, the
+module will refresh, displaying a graphical reprisentation of the current Elasticsearch nodes status.</p>
+<p>We know in the grand scheme of things that we want to display a graph and a form. When the App module is first loaded,
+it should make the calls necessary to get the list of documents that make up the penguins index from elasticsearch and display it to a box-and-whiskers plot.</p>
+<p>When the form is submitted, we want to send the data in that form to our backend. Once that has finished, we want
+the module to re-evaluate some javascript that once again gets the now-updated data from the penguins index and
+displays that data to the plot.</p>
+<p>The easiest way to make a module reload in React, is to update a state. So one thing we can do is to store the
+response from each fetch call inside a single state, so this way when the last successful response changes we know
+our index has been updated and our module should reload.</p>
+<p>This just requires we modify our state name. and we will also remove our previous graph drawing and state
+setting calls from the effect, as well as the stringified response from the JSX returned:</p>
+<div class="highlight-JSX notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span><span class="w"> </span><span class="nx">App</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="nx">last_elastic_response</span><span class="p">,</span><span class="w"> </span><span class="nx">setLastElasticResponse</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useState</span><span class="p">({});</span><span class="w"></span>
+
+<span class="w">  </span><span class="nx">useEffect</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="p">(</span><span class="k">async</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;http://localhost:3001/status&#39;</span><span class="p">);</span><span class="w"></span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">elastic_json</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">();</span><span class="w"></span>
+<span class="w">     </span><span class="p">})();</span><span class="w"></span>
+<span class="w">  </span><span class="p">},</span><span class="w"> </span><span class="p">[]);</span><span class="w"></span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">className</span><span class="o">=</span><span class="s">&quot;App&quot;</span><span class="p">&gt;</span><span class="w"></span>
+<span class="w">      </span><span class="p">&lt;</span><span class="nt">header</span> <span class="na">className</span><span class="o">=</span><span class="s">&quot;App-header&quot;</span><span class="p">&gt;</span><span class="w"></span>
+<span class="w">        </span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;Graph&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span><span class="w"></span>
+<span class="w">      </span><span class="p">&lt;/</span><span class="nt">header</span><span class="p">&gt;</span><span class="w"></span>
+<span class="w">    </span><span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span><span class="w"></span>
+<span class="w">  </span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>We need code to be run in two effects, when the module loads for the first time, and when the <code class="docutils literal notranslate"><span class="pre">last_elastic_response</span></code>
+state changes. We already have our first effect. We can create a second effect below the first with <code class="docutils literal notranslate"><span class="pre">last_elastic_response</span></code> as a
+dependency:</p>
+<div class="highlight-JSX notranslate"><div class="highlight"><pre><span></span><span class="nx">useEffect</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="p">(</span><span class="k">async</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">     </span><span class="c1">// Leaving it empty for now.</span><span class="w"></span>
+<span class="w">  </span><span class="p">})();</span><span class="w"></span>
+<span class="p">},</span><span class="w"> </span><span class="p">[</span><span class="nx">last_elastic_response</span><span class="p">]);</span><span class="w"></span>
+</pre></div>
+</div>
+<p>We need to fetch our data for the graph in both effects, so rather than copying code into two effects, we should
+abstract our fetching code out into a function that can be called in both effects. That said what we ACTUALLY need
+to happen in both effects is to draw the Vega graph, but this requires us getting the data first to draw the
+graph, so with this in mind, we will create two functions, one to draw the graph which calls the other function
+to get the data:</p>
+<div class="highlight-JSX notranslate"><div class="highlight"><pre><span></span><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">getBoxPlotData</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// Make fetch call to backend.</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">drawBoxWhiskersPlot</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">plot_data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">getBoxPlotData</span><span class="p">()</span><span class="w"></span>
+
+<span class="w">  </span><span class="c1">// Draw plot.</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="c1">// Runs only once, on module load.</span><span class="w"></span>
+<span class="nx">useEffect</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="p">(</span><span class="k">async</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">     </span><span class="nx">drawBoxWhiskersPlot</span><span class="p">()</span><span class="w"></span>
+<span class="w">  </span><span class="p">})();</span><span class="w"></span>
+<span class="p">},</span><span class="w"> </span><span class="p">[]);</span><span class="w"></span>
+
+<span class="c1">// Runs every time last_elastic_response state&#39;s value changes.</span><span class="w"></span>
+<span class="nx">useEffect</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="p">(</span><span class="k">async</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">     </span><span class="nx">drawBoxWhiskersPlot</span><span class="p">()</span><span class="w"></span>
+<span class="w">  </span><span class="p">})();</span><span class="w"></span>
+<span class="p">},</span><span class="w"> </span><span class="p">[</span><span class="nx">last_elastic_response</span><span class="p">]);</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Now lets flesh-out <code class="docutils literal notranslate"><span class="pre">getBoxPlotData()</span></code>. We know we need to make a fetch call to our backend API <code class="docutils literal notranslate"><span class="pre">/index/{index_name}/docs/all</span></code>.
+When the search results come back, they will be in a list of Elasticsearch JSON document objects, each of these
+documents has a property <code class="docutils literal notranslate"><span class="pre">_source</span></code> that contains the field data of the document. So for each element in the list
+that is returned, we need to grab the <code class="docutils literal notranslate"><span class="pre">_source</span></code> data, append it to a list of objects, and then return that
+list. This list of data will later be provided to Vega:</p>
+<div class="highlight-JSX notranslate"><div class="highlight"><pre><span></span><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">getBoxPlotData</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="kd">var</span><span class="w"> </span><span class="nx">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[]</span><span class="w"></span>
+
+<span class="w">  </span><span class="c1">// Default is 500. For another number set the &#39;size&#39; query parameter.</span><span class="w"></span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;http://localhost:3001/index/penguins/docs/all&#39;</span><span class="w"></span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">fetch</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span><span class="w"></span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">elastic_json</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">()</span><span class="w"></span>
+
+<span class="w">  </span><span class="c1">// Append the _source field of each document to the data[] list.</span><span class="w"></span>
+<span class="w">  </span><span class="nx">elastic_json</span><span class="p">.</span><span class="nx">forEach</span><span class="p">((</span><span class="nx">each_document</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nx">data</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">each_document</span><span class="p">.</span><span class="nx">_source</span><span class="p">)</span><span class="w"></span>
+<span class="w">  </span><span class="p">})</span><span class="w"></span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="nx">data</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Moving on, we now get to create our Vega visualization. We have to create a Vega specification to provide to
+<code class="docutils literal notranslate"><span class="pre">vegaEmbed()</span></code> for our box plot. Specifications can chagne greatly from one graph to the next, so I would very
+much reccomend taking a look at the Vega documentation and get a good grasp on all of the specification fields
+available. For our purposes, I will provide the specification with a comment explaining its makeup:</p>
+<div class="highlight-JSX notranslate"><div class="highlight"><pre><span></span><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">drawBoxWhiskersPlot</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">plot_data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">getBoxPlotData</span><span class="p">()</span><span class="w"></span>
+
+<span class="w">  </span><span class="c1">// The width and height fields here are</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// specific to how the visualisation is</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// styled and displayed on the page. Feel</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// free to play with those values.</span><span class="w"></span>
+<span class="w">  </span><span class="c1">//</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// The plot data is applied to the &#39;values&#39;</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// field within the data object.</span><span class="w"></span>
+<span class="w">  </span><span class="c1">//</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// Mark &#39;type&#39; and &#39;extent&#39; define the type</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// of plot and its coverage of the data.</span><span class="w"></span>
+<span class="w">  </span><span class="c1">//</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// Encoding is how we connect our data</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// with the x and y axis of the graph (in this</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// specific 2d graph at least. this</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// may change with other graph types that</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// don&#39;t rely on a 2d plane (such as a pie</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// graph.))</span><span class="w"></span>
+<span class="w">  </span><span class="c1">//</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// To connect the data, each axis needs</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// to know the field of each document&#39;s</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// data that either axis will represent.</span><span class="w"></span>
+<span class="w">  </span><span class="c1">//</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// We want the domain of values of the Y</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// axis to reflect our different &#39;Species&#39;</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// in a &#39;nominal&#39; (alphabetical) fashion</span><span class="w"></span>
+<span class="w">  </span><span class="c1">//</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// We also want the domain of values of</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// X to reflext the &#39;Body Mass (g)&#39; with</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// a quantitative (numeric) type.</span><span class="w"></span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">box_whiskers_spec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nx">width</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;container&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nx">height</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="s2">&quot;step&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">30</span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="nx">data</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="nx">values</span><span class="o">:</span><span class="w"> </span><span class="nx">box_plot_data</span><span class="w"></span>
+<span class="w">    </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="nx">mark</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="nx">type</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;boxplot&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nx">extent</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;min-max&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="nx">encoding</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="nx">y</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s2">&quot;field&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Species&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;type&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;nominal&quot;</span><span class="w"> </span><span class="p">},</span><span class="w"></span>
+<span class="w">      </span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="nx">field</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Body Mass (g)&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nx">type</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;quantitative&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nx">scale</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s2">&quot;zero&quot;</span><span class="o">:</span><span class="w"> </span><span class="kc">false</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">      </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">  </span><span class="c1">// Use our specification to generate a</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// Vega graph within the HTML DOM element</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// with the id &#39;#Graph&#39;.</span><span class="w"></span>
+<span class="w">  </span><span class="nx">vegaEmbed</span><span class="p">(</span><span class="s1">&#39;#Graph&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">box_whiskers_spec</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><em>You must ensure that the field names encoded to your axis EXACTLY reflect the desired field names within
+the data that you provide as values. Note the field</em> <code class="docutils literal notranslate"><span class="pre">Body</span> <span class="pre">Mass</span> <span class="pre">(g)</span></code> <em>which is exactly as it is listed
+in our data.</em></p>
+</div>
+<p>Now, if we put it all together, we should have an empty graph that is generated with the data that we uploaded
+to the Elasticsearch penguins index.</p>
+<div class="highlight-JSX notranslate"><div class="highlight"><pre><span></span><span class="k">import</span><span class="w"> </span><span class="nx">logo</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;./logo.svg&#39;</span><span class="p">;</span><span class="w"></span>
+<span class="k">import</span><span class="w"> </span><span class="s1">&#39;./App.css&#39;</span><span class="p">;</span><span class="w"></span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">useState</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;react&#39;</span><span class="p">;</span><span class="w"></span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">useEffect</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;react&#39;</span><span class="p">;</span><span class="w"></span>
+
+<span class="kd">function</span><span class="w"> </span><span class="nx">App</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="nx">last_elastic_response</span><span class="p">,</span><span class="w"> </span><span class="nx">setLastElasticResponse</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useState</span><span class="p">({});</span><span class="w"></span>
+
+<span class="w">  </span><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">getBoxPlotData</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[]</span><span class="w"></span>
+
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;http://localhost:3001/index/penguins/docs/all&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">fetch</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">elastic_json</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">()</span><span class="w"></span>
+
+<span class="w">    </span><span class="nx">elastic_json</span><span class="p">.</span><span class="nx">forEach</span><span class="p">((</span><span class="nx">each_document</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="nx">data</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">each_document</span><span class="p">.</span><span class="nx">_source</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">})</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">data</span><span class="w"></span>
+<span class="w">  </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">  </span><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">drawBoxWhiskersPlot</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">plot_data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">getBoxPlotData</span><span class="p">()</span><span class="w"></span>
+
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">box_whiskers_spec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nx">width</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;container&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nx">height</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="s2">&quot;step&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">30</span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="nx">data</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="nx">values</span><span class="o">:</span><span class="w"> </span><span class="nx">box_plot_data</span><span class="w"></span>
+<span class="w">    </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="nx">mark</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="nx">type</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;boxplot&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nx">extent</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;min-max&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="nx">encoding</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="nx">y</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s2">&quot;field&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Species&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;type&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;nominal&quot;</span><span class="w"> </span><span class="p">},</span><span class="w"></span>
+<span class="w">      </span><span class="nx">x</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="nx">field</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Body Mass (g)&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nx">type</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;quantitative&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nx">scale</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s2">&quot;zero&quot;</span><span class="o">:</span><span class="w"> </span><span class="kc">false</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">      </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">  </span><span class="nx">vegaEmbed</span><span class="p">(</span><span class="s1">&#39;#Graph&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">box_whiskers_spec</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">  </span><span class="nx">useEffect</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="p">(</span><span class="k">async</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">       </span><span class="nx">drawBoxWhiskersPlot</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">})();</span><span class="w"></span>
+<span class="w">  </span><span class="p">},</span><span class="w"> </span><span class="p">[]);</span><span class="w"></span>
+
+<span class="w">  </span><span class="nx">useEffect</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="p">(</span><span class="k">async</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">       </span><span class="nx">drawBoxWhiskersPlot</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">})();</span><span class="w"></span>
+<span class="w">  </span><span class="p">},</span><span class="w"> </span><span class="p">[</span><span class="nx">last_elastic_response</span><span class="p">]);</span><span class="w"></span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">className</span><span class="o">=</span><span class="s">&quot;App&quot;</span><span class="p">&gt;</span><span class="w"></span>
+<span class="w">      </span><span class="p">&lt;</span><span class="nt">header</span> <span class="na">className</span><span class="o">=</span><span class="s">&quot;App-header&quot;</span><span class="p">&gt;</span><span class="w"></span>
+<span class="w">        </span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;Graph&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span><span class="w"></span>
+<span class="w">      </span><span class="p">&lt;/</span><span class="nt">header</span><span class="p">&gt;</span><span class="w"></span>
+<span class="w">    </span><span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span><span class="w"></span>
+<span class="w">  </span><span class="p">)</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="k">export</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="nx">App</span><span class="p">;</span><span class="w"></span>
+</pre></div>
+</div>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="define-api.html" class="btn btn-neutral float-left" title="Further Define the Backend API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="load-data.html" class="btn btn-neutral float-left" title="Loading Datasets Into Elasticsearch" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="vega-form.html" class="btn btn-neutral float-right" title="Develop Form For Data Submission and Integration Into Refreshed Vega Visualisation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

@@ -5,4 +5,6 @@ Status
 
 .. code::
 
-   /status
+   GET: /status
+
+Gets the status of the running Elasticsearch instance as a whole.

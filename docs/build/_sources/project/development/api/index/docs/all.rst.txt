@@ -2,7 +2,21 @@
 All
 ***
 
+Returns all documents (up to a given max) from a given index.
+
 .. code::
 
-   /index/docs/all
+   GET: /index/{index_name}/docs/all?size={return_size}
    
+Parameters:
+
+* index_name [string] - Name of index whose documents will be fetched.
+
+* return_size [string] - Size of JSON list to be returned (default is 500).
+
+.. NOTE::
+
+   *If you want to return more than 10k hits, the size parameter will no longer work,
+   and you will need to modify the implementation of this API call to do so.*
+
+   As per the `Elasticsearch Search API Documentation <https://www.elastic.co/guide/en/elasticsearch/reference/current/search-search.html>`_: By default, you cannot page through more than 10,000 hits using the from and size parameters. To page through more hits, use the search_after parameter.

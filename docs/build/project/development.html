@@ -7,6 +7,9 @@
   <title>Development &mdash; react-vega-elasticsearch  documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/panels-bootstrap.5fd3999ee7762ccc51105388f4a9d115.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -14,7 +17,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -38,7 +40,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Tutorial:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Development</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="development/elasticsearch-setup.html">Download and Manage an Elasticsearch Instance</a></li>
@@ -46,6 +48,7 @@
 <li class="toctree-l2"><a class="reference internal" href="development/create-react.html">Create A Basic React application</a></li>
 <li class="toctree-l2"><a class="reference internal" href="development/create-vega.html">Create a Vega Visuialisation in React</a></li>
 <li class="toctree-l2"><a class="reference internal" href="development/define-api.html">Further Define the Backend API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development/load-data.html">Loading Datasets Into Elasticsearch</a></li>
 <li class="toctree-l2"><a class="reference internal" href="development/integrate-vega-elasticsearch.html">Incorporate Real-Time Elasticsearch Data Into Vega Visualisation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="development/vega-form.html">Develop Form For Data Submission and Integration Into Refreshed Vega Visualisation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="development/final-touches.html">CSS Styling and Cleaning Up</a></li>
@@ -79,25 +82,39 @@
              
   <p><a class="reference external" href="../index.html">&lt;- Go Back</a></p>
 <section id="development">
-<h1>Development<a class="headerlink" href="#development" title="Permalink to this heading"></a></h1>
+<h1>Development<a class="headerlink" href="#development" title="Permalink to this headline"></a></h1>
+<p>This project requires 3 major components:</p>
+<ul class="simple">
+<li><p>First is Elasticsearch itself. We don’t need to modify it in any way, we just need to configure and run
+the most recent stable Elasticsearch executable available.</p></li>
+<li><p>The second component is a back-end server that connects with Elasticsearch and allows us to send it queries
+through whatever API calls we define.</p></li>
+<li><p>The third and final componnent is the front-end, our React application itself,
+which we will connect to Elasticsearch by using the API we design for our back-end.</p></li>
+</ul>
+<p>This project is designed to create a minimum viable proof of concept, so only the
+API calls required that help us build our specific graph will be defined, but by the
+end of this, you should be able to design any other API calls you might need after.</p>
+<p>This project guide was created within Windows WSL Ubuntu, so it should work easily for
+Linux or WSL, where you may have to make some modifications to this process when
+working on MacOS.</p>
 <center><p><a class="reference external" href="./development/elasticsearch-setup.html">Start setting up Elasticsearch -&gt;</a></p>
 </center><div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<p class="caption" role="heading"><span class="caption-text">Development:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="development/elasticsearch-setup.html">Download and Manage an Elasticsearch Instance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development/elasticsearch-setup.html">Download and Manage an Elasticsearch Instance</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="development/elasticsearch-setup.html#cors-sop">CORS/SOP</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="development/create-backend.html">Create a Basic NodeJS Elasticsearch Backend</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development/create-react.html">Create A Basic React application</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development/create-vega.html">Create a Vega Visuialisation in React</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development/define-api.html">Further Define the Backend API</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="development/define-api.html#status">Status</a></li>
-<li class="toctree-l2"><a class="reference internal" href="development/define-api.html#index">Index</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="development/define-api.html#new">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="development/define-api.html#id2">Status</a></li>
-<li class="toctree-l3"><a class="reference internal" href="development/define-api.html#docs">Docs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development/define-api.html#demystifying-the-elasticsearch-client">Demystifying the Elasticsearch Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development/define-api.html#resources">Resources</a></li>
 </ul>
 </li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="development/load-data.html">Loading Datasets Into Elasticsearch</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development/integrate-vega-elasticsearch.html">Incorporate Real-Time Elasticsearch Data Into Vega Visualisation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development/vega-form.html">Develop Form For Data Submission and Integration Into Refreshed Vega Visualisation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development/final-touches.html">CSS Styling and Cleaning Up</a></li>

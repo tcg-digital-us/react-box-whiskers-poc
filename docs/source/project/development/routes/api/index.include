@@ -1,6 +1,6 @@
 
 Index
-^^^^^
++++++
 
 The Index route provides functionality to create and modify Elasticsearch indices.
 

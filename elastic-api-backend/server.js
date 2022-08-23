@@ -178,12 +178,12 @@ app.put("/index/new", (req, res) => {
   }
 })
 
-app.get("/index/status", (req, res) => {
-  if (!req.query.name) {
+app.get("/index/:name/status", (req, res) => {
+  if (!req.params.name) {
     res.json({ "error": "index name is a required parameter." })
   } else {
     client.indices.get({
-      index: req.query.name
+      index: req.params.name
     }).then((resres) => {
       res.json(resres)
     }).catch((resres) => {
@@ -192,13 +192,20 @@ app.get("/index/status", (req, res) => {
   }
 })
 
-app.get("/index/docs/all", (req, res) => {
-  if (!req.query.name) {
+app.get("/index/:name/docs/all", (req, res) => {
+
+  var index_name = req.params.name
+  var return_size = req.query.size
+
+  if (!index_name) {
     res.json({ "error": "index name is a required parameter." })
   } else {
+
+    if(!return_size){ return_size = 500 }
+
     client.search({
-      index: req.query.name,
-      size: 500
+      index: index_name,
+      size: return_size
     }).then((resres) => {
       res.json(resres.hits.hits)
     }).catch((resres) => {

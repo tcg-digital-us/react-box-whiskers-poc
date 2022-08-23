@@ -18,8 +18,7 @@ function). We want to keep it simple, we only need to display the
 returned JSON, so to start off we will create a very simple return that
 displays the stringified response we will be getting from Elasticsearch:
 
-.. code:: javascript
-   :force:
+.. code:: JSX
 
    function App() {
      return (
@@ -34,8 +33,7 @@ displays the stringified response we will be getting from Elasticsearch:
 We will provide a state to keep track of the Elasticsearch response so
 that every time the response changes our module is re-rendered:
 
-.. code:: javascript
-   :force:
+.. code:: JSX
 
    function App() {
      // Initialize the response to an empty JSON object.
@@ -55,8 +53,7 @@ upon loading the module. This will make a fetch request to the backend
 we set up earlier so that we can set the elastic_response state to the
 response, causing the module to re-render with the appropriate info:
 
-.. code:: javascript
-   :force:
+.. code:: JSX
 
    function App() {
      const [elastic_response, setElasticResponse] = useState({});

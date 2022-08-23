@@ -85,8 +85,31 @@ ouptut similar to this below:
 Copy the 'password for the elastic user' and save it somewhere because
 we will need it again later.
 
-**Note:** *The password for the elastic user is only shown once upon
-initial startup, so make sure you write it down!*
+.. ATTENTION::
+
+   *The password for the elastic user is only shown once upon initial startup, so make sure you write it down!*
+
+CORS/SOP
+^^^^^^^^
+
+Upon first successful startup, Elasticsearch populates its configuration file at 
+``config/elasticsearch.yml``. We can add to this file to set Elasticsearch to 
+allow requests from all origins.
+
+.. code:: python
+
+   # allow CORS requests from https://app.elasticvue.com
+   http.cors.enabled: true
+   http.cors.allow-origin: "*"
+
+   # and if your cluster uses authorization:
+   http.cors.allow-headers: X-Requested-With,Content-Type,Content-Length,Authorization
+
+.. NOTE:: 
+
+   If you haven't heard of Same-Origin Policiy, or Cross Origin Resource Sharing,
+   you should dedicate some time to understanding both, as it can be the source
+   of headache and misery for many a new developer.
 
 .. raw:: html
 

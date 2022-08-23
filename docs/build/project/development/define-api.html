@@ -7,6 +7,9 @@
   <title>Further Define the Backend API &mdash; react-vega-elasticsearch  documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/panels-bootstrap.5fd3999ee7762ccc51105388f4a9d115.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -14,12 +17,11 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Incorporate Real-Time Elasticsearch Data Into Vega Visualisation" href="integrate-vega-elasticsearch.html" />
+    <link rel="next" title="Create API Routes" href="routes/routes.html" />
     <link rel="prev" title="Create a Vega Visuialisation in React" href="create-vega.html" /> 
 </head>
 
@@ -38,7 +40,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Tutorial:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="../development.html">Development</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="elasticsearch-setup.html">Download and Manage an Elasticsearch Instance</a></li>
@@ -46,15 +48,14 @@
 <li class="toctree-l2"><a class="reference internal" href="create-react.html">Create A Basic React application</a></li>
 <li class="toctree-l2"><a class="reference internal" href="create-vega.html">Create a Vega Visuialisation in React</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Further Define the Backend API</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#status">Status</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#index">Index</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#new">New</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id2">Status</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#docs">Docs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#demystifying-the-elasticsearch-client">Demystifying the Elasticsearch Client</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="routes/routes.html">Create API Routes</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#resources">Resources</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="load-data.html">Loading Datasets Into Elasticsearch</a></li>
 <li class="toctree-l2"><a class="reference internal" href="integrate-vega-elasticsearch.html">Incorporate Real-Time Elasticsearch Data Into Vega Visualisation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="vega-form.html">Develop Form For Data Submission and Integration Into Refreshed Vega Visualisation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="final-touches.html">CSS Styling and Cleaning Up</a></li>
@@ -88,7 +89,7 @@
            <div itemprop="articleBody">
              
   <section id="further-define-the-backend-api">
-<h1>Further Define the Backend API<a class="headerlink" href="#further-define-the-backend-api" title="Permalink to this heading"></a></h1>
+<h1>Further Define the Backend API<a class="headerlink" href="#further-define-the-backend-api" title="Permalink to this headline"></a></h1>
 <p>Now that we have a generic graph displayed using data retrieved from
 Elasticsearch’s ‘status’ call, we can change direction towards what we
 are actually trying to accomplish. We need to use an actual dataset that
@@ -102,116 +103,94 @@ our visualisation, and some others that are just for ease of use. The
 functionalites for ease of use will be denoted as such, and they won’t
 have in-depth explanations (though, feel free to go through their code
 and understand why they do what they do).</p>
-<div class="contents local topic" id="minimal-api-routes-required">
-<p class="topic-title">Minimal API Routes Required:</p>
+<section id="demystifying-the-elasticsearch-client">
+<h2>Demystifying the Elasticsearch Client<a class="headerlink" href="#demystifying-the-elasticsearch-client" title="Permalink to this headline"></a></h2>
+<p>Shortly after setting up Elasticsearch and messing around with the client API, it became
+apparent that both API’s require slightly different methods of execution. Of the two Resources
+at the bottom of this page, I found that the Client API documentation didn’t seem to list the JSON objects that need to
+be provided to the Client API calls, and this is important because most any Elasticsearch
+API information that you will be able to find on the web is in regards to the
+Elasticsearch binary’s REST API documentation.</p>
+<p>In this situation, the best way to figure out exactly what parameters we needed to provide to
+the Client API, is to Ctrl-click whichever function call we are trying to make in order to check out its
+definition in the Elasticsearch Client module, and then to continue Ctrl-click’ing on the Typescript
+parameter types defined for that function call, until eventually we reach the definition of the parameter object
+that the Client API expects.</p>
+<p>If you have been around a while, this may be old-hat and you can skip this section, but I will provide an example
+below for people who haven’t gotten their feet wet yet mucking around in other people’s code.</p>
+<p>Let’s see what JSON parameters we need to provide if we are to make a call to the
+Client API to get the status of an index:</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><em>This method of Ctrl-click’ing through the source code should work with most modern
+IDE’s, but if it doesn’t work for you, then I recommend using Visual Studio Code.</em></p>
+</div>
+<ol class="arabic">
+<li><p>Let’s say we wanted to implement a call in <code class="docutils literal notranslate"><span class="pre">server.js</span></code> to get the status of an index:</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">client</span><span class="p">.</span><span class="nx">indices</span><span class="p">.</span><span class="nx">get</span><span class="p">()</span><span class="w"></span>
+</pre></div>
+</div>
+</li>
+<li><p>The function call <code class="docutils literal notranslate"><span class="pre">.get()</span></code> requires some arguments, but we need to know what parameters/objects we should provide it. If we Ctrl+click
+on <code class="docutils literal notranslate"><span class="pre">.get()</span></code>, we will be shown its Typescript definition (in this case there are three
+overloads of <code class="docutils literal notranslate"><span class="pre">.get()</span></code> available, one with options, and two more with options with/without metadata):</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">get</span><span class="p">(</span><span class="k">this</span><span class="o">:</span><span class="w"> </span><span class="nx">That</span><span class="p">,</span><span class="w"> </span><span class="nx">params</span><span class="o">:</span><span class="w"> </span><span class="nx">T</span><span class="p">.</span><span class="nx">IndicesGetRequest</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nx">TB</span><span class="p">.</span><span class="nx">IndicesGetRequest</span><span class="p">,</span><span class="w"> </span><span class="nx">options</span><span class="o">?:</span><span class="w"> </span><span class="nx">TransportRequestOptionsWithOutMeta</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="nx">T</span><span class="p">.</span><span class="nx">IndicesGetResponse</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+<span class="nx">get</span><span class="p">(</span><span class="k">this</span><span class="o">:</span><span class="w"> </span><span class="nx">That</span><span class="p">,</span><span class="w"> </span><span class="nx">params</span><span class="o">:</span><span class="w"> </span><span class="nx">T</span><span class="p">.</span><span class="nx">IndicesGetRequest</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nx">TB</span><span class="p">.</span><span class="nx">IndicesGetRequest</span><span class="p">,</span><span class="w"> </span><span class="nx">options</span><span class="o">?:</span><span class="w"> </span><span class="nx">TransportRequestOptionsWithMeta</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="nx">TransportResult</span><span class="o">&lt;</span><span class="nx">T</span><span class="p">.</span><span class="nx">IndicesGetResponse</span><span class="p">,</span><span class="w"> </span><span class="nx">unknown</span><span class="o">&gt;&gt;</span><span class="p">;</span><span class="w"></span>
+<span class="nx">get</span><span class="p">(</span><span class="k">this</span><span class="o">:</span><span class="w"> </span><span class="nx">That</span><span class="p">,</span><span class="w"> </span><span class="nx">params</span><span class="o">:</span><span class="w"> </span><span class="nx">T</span><span class="p">.</span><span class="nx">IndicesGetRequest</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nx">TB</span><span class="p">.</span><span class="nx">IndicesGetRequest</span><span class="p">,</span><span class="w"> </span><span class="nx">options</span><span class="o">?:</span><span class="w"> </span><span class="nx">TransportRequestOptions</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="nx">T</span><span class="p">.</span><span class="nx">IndicesGetResponse</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+</pre></div>
+</div>
+</li>
+<li><p>We can see that all three function calls take three arguments:</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="#status" id="id3">Status</a></p></li>
-<li><p><a class="reference internal" href="#index" id="id4">Index</a></p>
-<ul>
-<li><p><a class="reference internal" href="#new" id="id5">New</a></p></li>
-<li><p><a class="reference internal" href="#id2" id="id6">Status</a></p></li>
-<li><p><a class="reference internal" href="#docs" id="id7">Docs</a></p>
-<ul>
-<li><p><a class="reference internal" href="#all" id="id8">All</a></p></li>
-<li><p><a class="reference internal" href="#add" id="id9">Add</a></p></li>
-<li><p><a class="reference internal" href="#import" id="id10">Import</a></p></li>
+<li><p>A Typescript object reference pointing to the current instance calling the function.</p></li>
+<li><p>The params object (of type T.IndicesGetRequest and
+TB.IndicesGetRequest) that contains the parameters Elasticsearch requires for our request.</p></li>
+<li><p>An options object (one of three types). The trailing questionmark
+<code class="docutils literal notranslate"><span class="pre">options?</span></code> denotes that this argument is optional.</p></li>
 </ul>
+<p>Here we are interested in just the parameters, as the options mainly have only to do with the method of communication
+between our client and Elasticsearch, so we need to Ctrl+click the T.IndicesGetRequest type to see its type definition:</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="k">export</span><span class="w"> </span><span class="kr">interface</span><span class="w"> </span><span class="nx">IndicesGetRequest</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">RequestBase</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="nx">index</span><span class="o">:</span><span class="w"> </span><span class="nx">Indices</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="nx">allow_no_indices</span><span class="o">?:</span><span class="w"> </span><span class="kr">boolean</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="nx">expand_wildcards</span><span class="o">?:</span><span class="w"> </span><span class="nx">ExpandWildcards</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="nx">flat_settings</span><span class="o">?:</span><span class="w"> </span><span class="kr">boolean</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="nx">ignore_unavailable</span><span class="o">?:</span><span class="w"> </span><span class="kr">boolean</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="nx">include_defaults</span><span class="o">?:</span><span class="w"> </span><span class="kr">boolean</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="nx">local</span><span class="o">?:</span><span class="w"> </span><span class="kr">boolean</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="nx">master_timeout</span><span class="o">?:</span><span class="w"> </span><span class="nx">Time</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="nx">features</span><span class="o">?:</span><span class="w"> </span><span class="nx">IndicesGetFeatures</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
 </li>
-</ul>
+<li><p>At last, we see that can see that the <code class="docutils literal notranslate"><span class="pre">IndicesGetRequest</span></code> type has only one required parameter, <code class="docutils literal notranslate"><span class="pre">index</span></code> which can
+be a string or an array of strings (as defined by the Indices type). We can verify that this type and its
+parameters make sense by checking the <a class="reference external" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-get-index.html">Get index REST API for the Elasticsearch instance</a>.
+The REST API for Get index shows that it takes one path parameter <code class="docutils literal notranslate"><span class="pre">&lt;target&gt;</span></code> that is the name of the index
+we want the status of, as well as other query parameters whose names reflect the rest of the parameters in
+the <code class="docutils literal notranslate"><span class="pre">IndicesGetRequest</span></code> type. So to make our get request from step one, we can then add a JSON params object to the call
+as an argument with the required index name:</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">client</span><span class="p">.</span><span class="nx">indices</span><span class="p">.</span><span class="nx">get</span><span class="p">({</span><span class="w"> </span><span class="nx">index</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;name_of_index&#39;</span><span class="w"> </span><span class="p">})...</span><span class="w"></span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><em>This is only for instructinoal purposes. In step two above, we see that the ``get`` function returns a promise so that will
+need to be handled accordingly.</em></p>
+</div>
 </li>
+</ol>
+<p>Now, lets continue on to defining our server API!</p>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+<section id="resources">
+<h2>Resources<a class="headerlink" href="#resources" title="Permalink to this headline"></a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/rest-apis.html">Elasticsearch Rest API Documentation</a></p></li>
+<li><p><a class="reference external" href="https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/api-reference.html">Elasticsearch Client API Reference</a></p></li>
 </ul>
-</div>
-<section id="status">
-<h2>Status<a class="headerlink" href="#status" title="Permalink to this heading"></a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">status</span>
-</pre></div>
-</div>
-</section>
-<hr class="docutils" />
-<section id="index">
-<h2>Index<a class="headerlink" href="#index" title="Permalink to this heading"></a></h2>
-<p>The Index route provides functionality to create and modify Elasticsearch indices.</p>
-<section id="new">
-<h3>New<a class="headerlink" href="#new" title="Permalink to this heading"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">index</span><span class="o">/</span><span class="n">new</span>
-</pre></div>
-</div>
-</section>
-<hr class="docutils" />
-<section id="id2">
-<h3>Status<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">index</span><span class="o">/</span><span class="n">status</span>
-</pre></div>
-</div>
-</section>
-<hr class="docutils" />
-<section id="docs">
-<h3>Docs<a class="headerlink" href="#docs" title="Permalink to this heading"></a></h3>
-<section id="all">
-<h4>All<a class="headerlink" href="#all" title="Permalink to this heading"></a></h4>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">index</span><span class="o">/</span><span class="n">docs</span><span class="o">/</span><span class="nb">all</span>
-</pre></div>
-</div>
-</section>
-<hr class="docutils" />
-<section id="add">
-<h4>Add<a class="headerlink" href="#add" title="Permalink to this heading"></a></h4>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">index</span><span class="o">/</span><span class="n">docs</span><span class="o">/</span><span class="n">add</span>
-</pre></div>
-</div>
-</section>
-<hr class="docutils" />
-<section id="import">
-<h4>Import<a class="headerlink" href="#import" title="Permalink to this heading"></a></h4>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>PUT: /index/docs/import
-</pre></div>
-</div>
-<p>Imports data contained inside a JSON file into an Elasticsearch index.</p>
-<p>The data is an array of
-JSON objects, so in effect we can import this file as a list of
-documents to add to a penguins index, but to do so we need to manipulate the
-data in a way that makes Elasticsearch’s bulk upload function happy.</p>
-<p><strong>Equivalent Elasticsearch CLI API Call</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl --cacert <span class="s1">&#39;/path/to/elasticsearch-8.3.3/config/certs/http_ca.crt&#39;</span> --user <span class="s1">&#39;elastic:ELASTIC_PASSWORD&#39;</span> -X PUT --header <span class="s1">&#39;Content-Type: application/json&#39;</span> https://localhost:9200/_bulk -d <span class="s1">&#39;</span>
-<span class="s1">{ &quot;index&quot;:{ &quot;_index&quot;: &quot;penguins&quot;} }</span>
-<span class="s1">{ &quot;Species&quot;: &quot;Adelie&quot;, &quot;Island&quot;: &quot;Torgersen&quot;, &quot;Beak Length (mm)&quot;: 39.1, &quot;Beak Depth (mm)&quot;: 18.7, &quot;Flipper Length (mm)&quot;: 181, &quot;Body Mass (g)&quot;: 3750, &quot;Sex&quot;: &quot;MALE&quot; }</span>
-<span class="s1">{ &quot;index&quot;:{ &quot;_index&quot;: &quot;penguins&quot;} }</span>
-<span class="s1">{ &quot;Species&quot;: &quot;Adelie&quot;, &quot;Island&quot;: &quot;Torgersen&quot;, &quot;Beak Length (mm)&quot;: 39.5, &quot;Beak Depth (mm)&quot;: 17.4, &quot;Flipper Length (mm)&quot;: 186, &quot;Body Mass (g)&quot;: 3800, &quot;Sex&quot;: &quot;FEMALE&quot; }</span>
-<span class="s1">...</span>
-<span class="s1">&#39;</span>
-</pre></div>
-</div>
-<p><strong>Note:</strong> <em>The trailing elipses in the JSON data should be removed, or
-replaced with more pairs of index/document JSON objects!</em></p>
-<p>For uploading our data into elasticsearch it will be easiest to create
-an API point to do this for us. Here the completed API route should be
-appended to server.js:</p>
-<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">app</span><span class="p">.</span><span class="nx">put</span><span class="p">(</span><span class="s2">&quot;/index/docs/import&quot;</span><span class="p">,</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="w"> </span><span class="nx">res</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">index</span><span class="w"></span>
-<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">type</span><span class="w"></span>
-<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">filename</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">file</span><span class="w"></span>
-<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">require</span><span class="p">(</span><span class="nx">filename</span><span class="p">)</span><span class="w"></span>
-
-<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">json_header</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s2">&quot;index&quot;</span><span class="o">:</span><span class="p">{</span><span class="w"> </span><span class="s2">&quot;_index&quot;</span><span class="o">:</span><span class="w"> </span><span class="nx">index</span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
-
-<span class="w">  </span><span class="k">if</span><span class="p">(</span><span class="nx">type</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nx">json_header</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">][</span><span class="s1">&#39;_type&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">type</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
-
-<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">operations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">data</span><span class="p">.</span><span class="nx">flatMap</span><span class="p">(</span><span class="nx">doc</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">[</span><span class="nx">json_header</span><span class="p">,</span><span class="w"> </span><span class="nx">doc</span><span class="p">])</span><span class="w"></span>
-<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">bulkResponse</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">bulk</span><span class="p">({</span><span class="w"> </span><span class="nx">refresh</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="nx">operations</span><span class="p">})</span><span class="w"></span>
-
-<span class="w">  </span><span class="k">if</span><span class="p">(</span><span class="nx">bulkResponse</span><span class="p">.</span><span class="nx">errors</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">bulkResponse</span><span class="p">.</span><span class="nx">errors</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="s1">&#39;there was an error&#39;</span><span class="p">)</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
-
-<span class="w">  </span><span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="s1">&#39;Finished writing temp file&#39;</span><span class="p">)</span><span class="w"></span>
-<span class="p">})</span><span class="w"></span>
-</pre></div>
-</div>
-</section>
-</section>
 </section>
 </section>
 
@@ -220,7 +199,7 @@ appended to server.js:</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="create-vega.html" class="btn btn-neutral float-left" title="Create a Vega Visuialisation in React" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="integrate-vega-elasticsearch.html" class="btn btn-neutral float-right" title="Incorporate Real-Time Elasticsearch Data Into Vega Visualisation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="routes/routes.html" class="btn btn-neutral float-right" title="Create API Routes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

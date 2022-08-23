@@ -2,6 +2,36 @@
 New
 ___
 
+Creates a new index given the provided index schema.
+
 .. code::
 
-   /index/new
+   PUT: /index/new
+
+Parameters:
+
+* body [object] - Specification for creating a new index.
+  
+  e.g.:
+
+  .. code:: javascript
+
+     {
+       "index": "names",
+       "settings": {
+       "index": {
+         "number_of_shards": 1,
+         "number_of_replicas": 1
+       }
+     },
+       "mappings": {
+         "properties": {
+           "first": {
+             "type": "text"
+           },
+           "last": {
+             "type": "text"
+           }
+         }
+       }
+     }
