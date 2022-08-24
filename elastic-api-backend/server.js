@@ -130,6 +130,13 @@
 // "file": "/home/donchocheese/tcg-digital/penguins.json"
 // }'
 
+// curl --cacert '/path_to_cert/elasticsearch-8.3.3/config/certs/http_ca.crt' --user 'elastic:password' -X POST --header 'Content-Type: application/json' https://localhost:9200/penguins/_delete_by_query -d '
+// {
+//     "query" : { 
+//         "match_all" : {}
+//     }
+// }'
+
 import Express from 'express';
 import cors from 'cors';
 

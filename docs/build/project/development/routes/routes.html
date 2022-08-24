@@ -97,7 +97,7 @@ documents to an index.</p>
 <p>Additionally, will also want to create indices to mess around with, as well as easily upload datasets to our indices
 so that we don’t have to add documents one-by-one (I hear there are tools to do this, but I couldn’t find any that
 worked quickly and easily).</p>
-<p>Finally, and while not specifically necessary, we will want to check the status of an index as well.</p>
+<p>Finally, and while not specifically necessary, we will want to check the number of documents in an index as well.</p>
 <p>Below each API route has been defined, and code has been provided, with explanation where necessary. Each of these
 routes need to be appended to <code class="docutils literal notranslate"><span class="pre">index.js</span></code> in the same manner as the <code class="docutils literal notranslate"><span class="pre">/status</span></code> route.</p>
 <div class="contents local topic" id="minimal-api-routes-to-define">
@@ -137,14 +137,25 @@ routes need to be appended to <code class="docutils literal notranslate"><span c
 <p><strong>Code</strong></p>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;/status&quot;</span><span class="p">,</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="w"> </span><span class="nx">res</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">  </span><span class="nx">client</span><span class="p">.</span><span class="nx">cluster</span><span class="p">.</span><span class="nx">health</span><span class="p">().</span><span class="nx">then</span><span class="p">((</span><span class="nx">es_res</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">es_res</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">es_res</span><span class="p">)</span><span class="w"></span>
 <span class="w">  </span><span class="p">}).</span><span class="k">catch</span><span class="p">((</span><span class="nx">es_err</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">es_err</span><span class="p">)</span><span class="w"></span>
 <span class="w">  </span><span class="p">})</span><span class="w"></span>
 <span class="p">})</span><span class="w"></span>
 </pre></div>
 </div>
-</section>
+<details class="sphinx-bs dropdown card mb-3">
+<summary class="summary-title card-header">
+CLI Curl Example<div class="summary-down docutils">
+<svg version="1.1" width="24" height="24" class="octicon octicon-chevron-down" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M5.22 8.72a.75.75 0 000 1.06l6.25 6.25a.75.75 0 001.06 0l6.25-6.25a.75.75 0 00-1.06-1.06L12 14.44 6.28 8.72a.75.75 0 00-1.06 0z"></path></svg></div>
+<div class="summary-up docutils">
+<svg version="1.1" width="24" height="24" class="octicon octicon-chevron-up" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M18.78 15.28a.75.75 0 000-1.06l-6.25-6.25a.75.75 0 00-1.06 0l-6.25 6.25a.75.75 0 101.06 1.06L12 9.56l5.72 5.72a.75.75 0 001.06 0z"></path></svg></div>
+</summary><div class="summary-content card-body docutils">
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ curl -X GET http://localhost:3001/status
+</pre></div>
+</div>
+</div>
+</details></section>
 <hr class="docutils" />
 <section id="index">
 <h2><a class="toc-backref" href="#minimal-api-routes-to-define">Index</a><a class="headerlink" href="#index" title="Permalink to this headline"></a></h2>
@@ -197,7 +208,7 @@ with the IndicesCreateRequest type argument defined for <code class="docutils li
 <span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">spec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="w"></span>
 
 <span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">spec</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">({</span><span class="w"> </span><span class="s2">&quot;error&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;spec is a required parameter.&quot;</span><span class="w"> </span><span class="p">})</span><span class="w"></span>
+<span class="w">    </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">({</span><span class="w"> </span><span class="s2">&quot;error&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Backend API &#39;/index/new&#39; requires body parameter&#39;spec&#39;.&quot;</span><span class="w"> </span><span class="p">})</span><span class="w"></span>
 <span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nx">client</span><span class="p">.</span><span class="nx">indices</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">spec</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">es_res</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">      </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">es_res</span><span class="p">)</span><span class="w"></span>
@@ -208,7 +219,52 @@ with the IndicesCreateRequest type argument defined for <code class="docutils li
 <span class="p">})</span><span class="w"></span>
 </pre></div>
 </div>
-</section>
+<details class="sphinx-bs dropdown card mb-3">
+<summary class="summary-title card-header">
+CLI Curl Example<div class="summary-down docutils">
+<svg version="1.1" width="24" height="24" class="octicon octicon-chevron-down" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M5.22 8.72a.75.75 0 000 1.06l6.25 6.25a.75.75 0 001.06 0l6.25-6.25a.75.75 0 00-1.06-1.06L12 14.44 6.28 8.72a.75.75 0 00-1.06 0z"></path></svg></div>
+<div class="summary-up docutils">
+<svg version="1.1" width="24" height="24" class="octicon octicon-chevron-up" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M18.78 15.28a.75.75 0 000-1.06l-6.25-6.25a.75.75 0 00-1.06 0l-6.25 6.25a.75.75 0 101.06 1.06L12 9.56l5.72 5.72a.75.75 0 001.06 0z"></path></svg></div>
+</summary><div class="summary-content card-body docutils">
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ curl -X PUT --header <span class="s1">&#39;Content-Type: application/json&#39;</span> http://localhost:3001/index/new -d <span class="s1">&#39;</span>
+<span class="s1">{</span>
+<span class="s1">  &quot;index&quot;: &quot;penguins&quot;,</span>
+<span class="s1">  &quot;settings&quot;: {</span>
+<span class="s1">    &quot;index&quot;: {</span>
+<span class="s1">      &quot;number_of_shards&quot;: 1,</span>
+<span class="s1">      &quot;number_of_replicas&quot;: 1</span>
+<span class="s1">    }</span>
+<span class="s1">  },</span>
+<span class="s1">  &quot;mappings&quot;: {</span>
+<span class="s1">    &quot;properties&quot;: {</span>
+<span class="s1">      &quot;Species&quot;: {</span>
+<span class="s1">        &quot;type&quot;: &quot;text&quot;</span>
+<span class="s1">      },</span>
+<span class="s1">      &quot;Island&quot;: {</span>
+<span class="s1">        &quot;type&quot;: &quot;text&quot;</span>
+<span class="s1">      },</span>
+<span class="s1">      &quot;Beak Length (mm)&quot;: {</span>
+<span class="s1">        &quot;type&quot;: &quot;float&quot;</span>
+<span class="s1">      },</span>
+<span class="s1">      &quot;Beak Depth (mm)&quot;: {</span>
+<span class="s1">        &quot;type&quot;: &quot;float&quot;</span>
+<span class="s1">      },</span>
+<span class="s1">      &quot;Flipper Length (mm)&quot;: {</span>
+<span class="s1">        &quot;type&quot;: &quot;float&quot;</span>
+<span class="s1">      },</span>
+<span class="s1">      &quot;Body Mass (g)&quot;: {</span>
+<span class="s1">        &quot;type&quot;: &quot;float&quot;</span>
+<span class="s1">      },</span>
+<span class="s1">      &quot;Sex&quot;: {</span>
+<span class="s1">        &quot;type&quot;: &quot;text&quot;</span>
+<span class="s1">      }</span>
+<span class="s1">    }</span>
+<span class="s1">  }</span>
+<span class="s1">}&#39;</span>
+</pre></div>
+</div>
+</div>
+</details></section>
 <hr class="docutils" />
 <section id="count">
 <h3><a class="toc-backref" href="#minimal-api-routes-to-define">Count</a><a class="headerlink" href="#count" title="Permalink to this headline"></a></h3>
@@ -231,13 +287,13 @@ with the IndicesCreateRequest type argument defined for <code class="docutils li
 <p><strong>Code</strong></p>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;/index/:name/count&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="w"> </span><span class="nx">res</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 
-<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">name</span><span class="w"></span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">index_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">name</span><span class="w"></span>
 
-<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">name</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">({</span><span class="w"> </span><span class="s2">&quot;error&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;index name is a required parameter.&quot;</span><span class="w"> </span><span class="p">})</span><span class="w"></span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">index_name</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">({</span><span class="w"> </span><span class="s2">&quot;error&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Backend API &#39;/index/{index_name}/count&#39; requires path parameter &#39;index_name&#39;.&quot;</span><span class="w"> </span><span class="p">})</span><span class="w"></span>
 <span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nx">client</span><span class="p">.</span><span class="nx">count</span><span class="p">({</span><span class="w"></span>
-<span class="w">      </span><span class="nx">index</span><span class="o">:</span><span class="w"> </span><span class="nx">name</span><span class="w"></span>
+<span class="w">      </span><span class="nx">index</span><span class="o">:</span><span class="w"> </span><span class="nx">index_name</span><span class="w"></span>
 <span class="w">    </span><span class="p">}).</span><span class="nx">then</span><span class="p">((</span><span class="nx">es_res</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">      </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">es_res</span><span class="p">)</span><span class="w"></span>
 <span class="w">    </span><span class="p">}).</span><span class="k">catch</span><span class="p">((</span><span class="nx">es_err</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -247,7 +303,18 @@ with the IndicesCreateRequest type argument defined for <code class="docutils li
 <span class="p">})</span><span class="w"></span>
 </pre></div>
 </div>
-</section>
+<details class="sphinx-bs dropdown card mb-3">
+<summary class="summary-title card-header">
+CLI Curl Example<div class="summary-down docutils">
+<svg version="1.1" width="24" height="24" class="octicon octicon-chevron-down" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M5.22 8.72a.75.75 0 000 1.06l6.25 6.25a.75.75 0 001.06 0l6.25-6.25a.75.75 0 00-1.06-1.06L12 14.44 6.28 8.72a.75.75 0 00-1.06 0z"></path></svg></div>
+<div class="summary-up docutils">
+<svg version="1.1" width="24" height="24" class="octicon octicon-chevron-up" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M18.78 15.28a.75.75 0 000-1.06l-6.25-6.25a.75.75 0 00-1.06 0l-6.25 6.25a.75.75 0 101.06 1.06L12 9.56l5.72 5.72a.75.75 0 001.06 0z"></path></svg></div>
+</summary><div class="summary-content card-body docutils">
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ curl -X GET http://localhost:3001/index/penguins/count
+</pre></div>
+</div>
+</div>
+</details></section>
 <hr class="docutils" />
 <section id="docs">
 <h3><a class="toc-backref" href="#minimal-api-routes-to-define">Docs</a><a class="headerlink" href="#docs" title="Permalink to this headline"></a></h3>
@@ -259,7 +326,7 @@ with the IndicesCreateRequest type argument defined for <code class="docutils li
 <div class="d-flex col-lg-12 p-2 docutils">
 <div class="card w-100 shadow docutils">
 <div class="card-body docutils">
-<p class="card-text"><span class="sphinx-bs badge badge-primary">GET</span> /index/{index_name}/docs/all?size={return_size}</p>
+<p class="card-text"><span class="sphinx-bs badge badge-primary">GET</span> /index/{index_name}/docs/all?size=500</p>
 </div>
 </div>
 </div>
@@ -268,7 +335,7 @@ with the IndicesCreateRequest type argument defined for <code class="docutils li
 <p><strong>Parameters:</strong></p>
 <ul class="simple">
 <li><p>index_name - Name of index whose documents will be fetched.</p></li>
-<li><p>return_size - (optional) Size of JSON list to be returned (default is 500).</p></li>
+<li><p>size - (optional) Size of JSON list to be returned (default is 500).</p></li>
 </ul>
 <p><strong>Code:</strong></p>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;/index/:name/docs/all&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="w"> </span><span class="nx">res</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -277,10 +344,10 @@ with the IndicesCreateRequest type argument defined for <code class="docutils li
 <span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">return_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">query</span><span class="p">.</span><span class="nx">size</span><span class="w"></span>
 
 <span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">index_name</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">({</span><span class="w"> </span><span class="s2">&quot;error&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;index name is a required parameter.&quot;</span><span class="w"> </span><span class="p">})</span><span class="w"></span>
+<span class="w">    </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">({</span><span class="w"> </span><span class="s2">&quot;error&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Backend API &#39;/index/{index_name}/docs/all&#39; requires path parameter &#39;index_name&#39; and query parameter &#39;size&#39;.&quot;</span><span class="w"> </span><span class="p">})</span><span class="w"></span>
 <span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 
-<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">return_size</span><span class="p">){</span><span class="w"> </span><span class="nx">return_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">500</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">return_size</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">return_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">500</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
 
 <span class="w">    </span><span class="nx">client</span><span class="p">.</span><span class="nx">search</span><span class="p">({</span><span class="w"></span>
 <span class="w">      </span><span class="nx">index</span><span class="o">:</span><span class="w"> </span><span class="nx">index_name</span><span class="p">,</span><span class="w"></span>
@@ -305,17 +372,33 @@ rather we have to return the list of hits for the search with</em> <code class="
 and you will need to modify the implementation of this API call to do so.</em></p>
 <p>As per the <a class="reference external" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/search-search.html">Elasticsearch Search API Documentation</a>: “By default, you cannot page through more than 10,000 hits using the from and size parameters. To page through more hits, use the search_after parameter”.</p>
 </div>
-</section>
+<details class="sphinx-bs dropdown card mb-3">
+<summary class="summary-title card-header">
+CLI Curl Example<div class="summary-down docutils">
+<svg version="1.1" width="24" height="24" class="octicon octicon-chevron-down" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M5.22 8.72a.75.75 0 000 1.06l6.25 6.25a.75.75 0 001.06 0l6.25-6.25a.75.75 0 00-1.06-1.06L12 14.44 6.28 8.72a.75.75 0 00-1.06 0z"></path></svg></div>
+<div class="summary-up docutils">
+<svg version="1.1" width="24" height="24" class="octicon octicon-chevron-up" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M18.78 15.28a.75.75 0 000-1.06l-6.25-6.25a.75.75 0 00-1.06 0l-6.25 6.25a.75.75 0 101.06 1.06L12 9.56l5.72 5.72a.75.75 0 001.06 0z"></path></svg></div>
+</summary><div class="summary-content card-body docutils">
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ curl -X GET http://localhost:3001/index/penguins/docs/all?size<span class="o">=</span><span class="m">10</span>
+</pre></div>
+</div>
+</div>
+</details></section>
 <hr class="docutils" />
 <section id="add">
 <h4><a class="toc-backref" href="#minimal-api-routes-to-define">Add</a><a class="headerlink" href="#add" title="Permalink to this headline"></a></h4>
-<p>Adds a single document to an index.</p>
+<p>Adds a single document to an index</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><em>This function adds a document without specifying a type. Specifying a type could
+be done with a query parameter, but this will be an excersize left up to the reader.</em></p>
+</div>
 <div class="sphinx-bs container-lg pb-3 docutils">
 <div class="row docutils">
 <div class="d-flex col-lg-12 p-2 docutils">
 <div class="card w-100 shadow docutils">
 <div class="card-body docutils">
-<p class="card-text"><span class="sphinx-bs badge badge-secondary">PUT</span> /index/docs/add</p>
+<p class="card-text"><span class="sphinx-bs badge badge-secondary">PUT</span> /index/{index_name}/docs/add</p>
 </div>
 </div>
 </div>
@@ -323,17 +406,13 @@ and you will need to modify the implementation of this API call to do so.</em></
 </div>
 <p><strong>Parameters</strong></p>
 <ul>
-<li><p>body - An object containing two values, the first being the name of the index to
-add to, and the second being the actual data to be added to the index.</p>
+<li><p>index_name - Name of index to which the document will be added.</p></li>
+<li><p>body - An object containing the actual data to be added to the index.</p>
 <p>e.g.:</p>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;index_to_add_to&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="s2">&quot;data&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="s2">&quot;value_1&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">40</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="s2">&quot;value_2&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">12</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="s2">&quot;value_3&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">31</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="p">...</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="s2">&quot;value_1&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">40</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="s2">&quot;value_2&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">12</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="s2">&quot;value_3&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">31</span><span class="p">,</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
@@ -345,21 +424,19 @@ you are trying to add to, even if you are going to leave those fields empty.</p>
 </li>
 </ul>
 <p><strong>Code</strong></p>
-<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">app</span><span class="p">.</span><span class="nx">put</span><span class="p">(</span><span class="s2">&quot;/index/docs/add&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="w"> </span><span class="nx">res</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">app</span><span class="p">.</span><span class="nx">put</span><span class="p">(</span><span class="s2">&quot;/index/:name/docs/add&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="w"> </span><span class="nx">res</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 
-<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">name</span><span class="w"></span>
-<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">data</span><span class="w"></span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">name</span><span class="w"></span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="w"></span>
 
 <span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">name</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">!</span><span class="nx">data</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">({</span><span class="w"> </span><span class="s2">&quot;error&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;index name and data is a required parameter.&quot;</span><span class="w"> </span><span class="p">})</span><span class="w"></span>
+<span class="w">    </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">({</span><span class="w"> </span><span class="s2">&quot;error&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Backend API &#39;/index/{index_name}/docs/add&#39; requires path parameter &#39;name&#39; and body content.&quot;</span><span class="w"> </span><span class="p">})</span><span class="w"></span>
 <span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nx">client</span><span class="p">.</span><span class="nx">index</span><span class="p">({</span><span class="w"></span>
 <span class="w">      </span><span class="nx">index</span><span class="o">:</span><span class="w"> </span><span class="nx">name</span><span class="p">,</span><span class="w"></span>
-<span class="w">      </span><span class="nb">document</span><span class="o">:</span><span class="w"> </span><span class="nx">data</span><span class="w"></span>
+<span class="w">      </span><span class="nb">document</span><span class="o">:</span><span class="w"> </span><span class="nx">data</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nx">refresh</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="w"></span>
 <span class="w">    </span><span class="p">}).</span><span class="nx">then</span><span class="p">((</span><span class="nx">es_res</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-
-<span class="w">      </span><span class="c1">// Refresh the index after adding so that it is aware of our changes.</span><span class="w"></span>
-<span class="w">      </span><span class="nx">client</span><span class="p">.</span><span class="nx">indices</span><span class="p">.</span><span class="nx">refresh</span><span class="p">({</span><span class="w"> </span><span class="nx">index</span><span class="o">:</span><span class="w"> </span><span class="nx">name</span><span class="w"> </span><span class="p">})</span><span class="w"></span>
 <span class="w">      </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">es_res</span><span class="p">)</span><span class="w"></span>
 <span class="w">    </span><span class="p">}).</span><span class="k">catch</span><span class="p">((</span><span class="nx">es_err</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">      </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">es_err</span><span class="p">)</span><span class="w"></span>
@@ -368,17 +445,43 @@ you are trying to add to, even if you are going to leave those fields empty.</p>
 <span class="p">})</span><span class="w"></span>
 </pre></div>
 </div>
-</section>
+<details class="sphinx-bs dropdown card mb-3">
+<summary class="summary-title card-header">
+CLI Curl Example<div class="summary-down docutils">
+<svg version="1.1" width="24" height="24" class="octicon octicon-chevron-down" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M5.22 8.72a.75.75 0 000 1.06l6.25 6.25a.75.75 0 001.06 0l6.25-6.25a.75.75 0 00-1.06-1.06L12 14.44 6.28 8.72a.75.75 0 00-1.06 0z"></path></svg></div>
+<div class="summary-up docutils">
+<svg version="1.1" width="24" height="24" class="octicon octicon-chevron-up" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M18.78 15.28a.75.75 0 000-1.06l-6.25-6.25a.75.75 0 00-1.06 0l-6.25 6.25a.75.75 0 101.06 1.06L12 9.56l5.72 5.72a.75.75 0 001.06 0z"></path></svg></div>
+</summary><div class="summary-content card-body docutils">
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ curl -X PUT --header <span class="s1">&#39;Content-Type: application/json&#39;</span> http://localhost:3001/index/penguins/docs/add -d <span class="s1">&#39;</span>
+<span class="s1">{</span>
+<span class="s1">  &quot;Species&quot;: &quot;Emperor&quot;,</span>
+<span class="s1">  &quot;Island&quot;: &quot;Snow Hill&quot;,</span>
+<span class="s1">  &quot;Beak Length (mm)&quot;: 39.4,</span>
+<span class="s1">  &quot;Beak Depth (mm)&quot;: 18.2,</span>
+<span class="s1">  &quot;Flipper Length (mm)&quot;: 182,</span>
+<span class="s1">  &quot;Body Mass (g)&quot; 3720,</span>
+<span class="s1">  &quot;Sex&quot;: &quot;MALE&quot;</span>
+<span class="s1">}&#39;</span>
+</pre></div>
+</div>
+</div>
+</details></section>
 <hr class="docutils" />
 <section id="import">
 <h4><a class="toc-backref" href="#minimal-api-routes-to-define">Import</a><a class="headerlink" href="#import" title="Permalink to this headline"></a></h4>
-<p>Imports data of a single type contained inside a JSON file into an Elasticsearch index.</p>
+<p>Imports data contained inside a JSON file into an Elasticsearch index.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><em>This route definition assumes that the documents are not associated with
+a type. Adding functionality for discerning and uploading documents with
+uniform or varying types will be an excersize left for the reader.</em></p>
+</div>
 <div class="sphinx-bs container-lg pb-3 docutils">
 <div class="row docutils">
 <div class="d-flex col-lg-12 p-2 docutils">
 <div class="card w-100 shadow docutils">
 <div class="card-body docutils">
-<p class="card-text"><span class="sphinx-bs badge badge-secondary">PUT</span> /index/docs/import</p>
+<p class="card-text"><span class="sphinx-bs badge badge-secondary">PUT</span> /index/{index_name}/docs/import</p>
 </div>
 </div>
 </div>
@@ -386,19 +489,18 @@ you are trying to add to, even if you are going to leave those fields empty.</p>
 </div>
 <p><strong>Parameters</strong></p>
 <ul>
-<li><p>body - An object containing the index name, document type (optional), and filename from
-which the data will be uploaded.</p>
+<li><p>index_name - Name of index to which the documents will be imported.</p></li>
+<li><p>body - An object containing the filename from which the data will be uploaded.</p>
 <p>e.g.:</p>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="s2">&quot;index&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;penguins&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="s2">&quot;file&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;/path_to_file/penguins.json&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="s2">&quot;file&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;/path/to/penguins.json&quot;</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
 </li>
 </ul>
-<p>The data that we plan to import is an array of
-JSON objects within <code class="docutils literal notranslate"><span class="pre">penguins.json</span></code>, and we will assume that currently this is the only data format that we
+<p>The data that we plan to import is an array of JSON objects within <code class="docutils literal notranslate"><span class="pre">penguins.json</span></code>,
+and we will assume that currently this is the only data format that we
 will be using to upload. We can import this file as a list of
 documents to add to a penguins index, but to do so we need to manipulate the
 data in a way that makes Elasticsearch’s bulk upload function happy.</p>
@@ -421,7 +523,7 @@ data in a way that makes Elasticsearch’s bulk upload function happy.</p>
 </pre></div>
 </div>
 <p>But elasticsearch’s bulk function requires each document in the data to have the
-index and type defined for each document. You can see how this works with the
+index and, optionally, type defined for each document. You can see how this works with the
 command line equivalent of this API call:</p>
 <p>Equivalent Elasticsearch CLI API Call:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl --cacert <span class="s1">&#39;/path/to/elasticsearch-8.3.3/config/certs/http_ca.crt&#39;</span> --user <span class="s1">&#39;elastic:ELASTIC_PASSWORD&#39;</span> -X PUT --header <span class="s1">&#39;Content-Type: application/json&#39;</span> https://localhost:9200/_bulk -d <span class="s1">&#39;</span>
@@ -451,31 +553,81 @@ command line equivalent of this API call:</p>
 map all of the new index identifying objects to each document, resulting
 in a JSON array that we can provide to Elasticsearch for bulk upload.</p>
 <p><strong>Code</strong></p>
-<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">app</span><span class="p">.</span><span class="nx">put</span><span class="p">(</span><span class="s2">&quot;/index/docs/import&quot;</span><span class="p">,</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="w"> </span><span class="nx">res</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">index</span><span class="w"></span>
-<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">type</span><span class="w"></span>
-<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">filename</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">file</span><span class="w"></span>
-<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">require</span><span class="p">(</span><span class="nx">filename</span><span class="p">)</span><span class="w"></span>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="c1">// Some parts of this route could be refactored/abstracted out for</span><span class="w"></span>
+<span class="c1">// more modularity, but this will be left up to the reader.</span><span class="w"></span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">put</span><span class="p">(</span><span class="s2">&quot;/index/:name/docs/import&quot;</span><span class="p">,</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="w"> </span><span class="nx">res</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">name</span><span class="w"></span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">filename</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">filename</span><span class="w"></span>
 
-<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">json_header</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s2">&quot;index&quot;</span><span class="o">:</span><span class="p">{</span><span class="w"> </span><span class="s2">&quot;_index&quot;</span><span class="o">:</span><span class="w"> </span><span class="nx">index</span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">index</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">!</span><span class="nx">filename</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">({</span><span class="w"> </span><span class="s2">&quot;error&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Backend API &#39;/index/{index_name}/docs/import&#39; requires path parameter &#39;index_name&#39; and body parameter &#39;filename&#39;&quot;</span><span class="w"> </span><span class="p">})</span><span class="w"></span>
+<span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 
-<span class="w">  </span><span class="k">if</span><span class="p">(</span><span class="nx">type</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nx">json_header</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">][</span><span class="s1">&#39;_type&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">type</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// We are assuming here that each entry in our penguins dataset belongs to the</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// same index, so we are giving each index definition the same value.</span><span class="w"></span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">json_header</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s2">&quot;index&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s2">&quot;_index&quot;</span><span class="o">:</span><span class="w"> </span><span class="nx">index</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">// Require doesn&#39;t return a promise, so we need to use a try/catch statement</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// to catch an error when loading the file.</span><span class="w"></span>
+<span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">require</span><span class="p">(</span><span class="nx">filename</span><span class="p">)</span><span class="w"></span>
+
+<span class="w">      </span><span class="c1">// Create a new list, associating the same json_header to each document.</span><span class="w"></span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">bulk_operations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">data</span><span class="p">.</span><span class="nx">flatMap</span><span class="p">(</span><span class="nx">doc</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">[</span><span class="nx">json_header</span><span class="p">,</span><span class="w"> </span><span class="nx">doc</span><span class="p">])</span><span class="w"></span>
+
+<span class="w">      </span><span class="c1">// If you check the .bulk() API, you will see that we can provide &#39;index&#39;</span><span class="w"></span>
+<span class="w">      </span><span class="c1">// as an argument here, but we don&#39;t need to given we have associated index</span><span class="w"></span>
+<span class="w">      </span><span class="c1">// objects with each document. Refresh causes Elasticsearch to refresh itself</span><span class="w"></span>
+<span class="w">      </span><span class="c1">// after this import.</span><span class="w"></span>
+<span class="w">      </span><span class="nx">client</span><span class="p">.</span><span class="nx">bulk</span><span class="p">({</span><span class="w"></span>
+<span class="w">        </span><span class="nx">refresh</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nx">operations</span><span class="o">:</span><span class="w"> </span><span class="nx">bulk_operations</span><span class="w"></span>
+<span class="w">      </span><span class="p">}).</span><span class="nx">then</span><span class="p">((</span><span class="nx">es_res</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">es_res</span><span class="p">)</span><span class="w"></span>
+<span class="w">      </span><span class="p">}).</span><span class="k">catch</span><span class="p">((</span><span class="nx">es_err</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">es_err</span><span class="p">)</span><span class="w"></span>
+<span class="w">      </span><span class="p">})</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="nx">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
 <span class="w">  </span><span class="p">}</span><span class="w"></span>
-
-<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">operations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">data</span><span class="p">.</span><span class="nx">flatMap</span><span class="p">(</span><span class="nx">doc</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">[</span><span class="nx">json_header</span><span class="p">,</span><span class="w"> </span><span class="nx">doc</span><span class="p">])</span><span class="w"></span>
-<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">bulk_response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">bulk</span><span class="p">({</span><span class="w"> </span><span class="nx">refresh</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="nx">operations</span><span class="p">})</span><span class="w"></span>
-
-<span class="w">  </span><span class="k">if</span><span class="p">(</span><span class="nx">bulk_response</span><span class="p">.</span><span class="nx">errors</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">bulk_response</span><span class="p">.</span><span class="nx">errors</span><span class="p">)</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
-
-<span class="w">  </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">({</span><span class="w"> </span><span class="s2">&quot;status&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;success&quot;</span><span class="w"> </span><span class="p">})</span><span class="w"></span>
 <span class="p">})</span><span class="w"></span>
 </pre></div>
 </div>
-<hr class="docutils" />
-<p>All right! You are still here? Then onwards and oxwards!</p>
+<details class="sphinx-bs dropdown card mb-3">
+<summary class="summary-title card-header">
+CLI Curl Example<div class="summary-down docutils">
+<svg version="1.1" width="24" height="24" class="octicon octicon-chevron-down" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M5.22 8.72a.75.75 0 000 1.06l6.25 6.25a.75.75 0 001.06 0l6.25-6.25a.75.75 0 00-1.06-1.06L12 14.44 6.28 8.72a.75.75 0 00-1.06 0z"></path></svg></div>
+<div class="summary-up docutils">
+<svg version="1.1" width="24" height="24" class="octicon octicon-chevron-up" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M18.78 15.28a.75.75 0 000-1.06l-6.25-6.25a.75.75 0 00-1.06 0l-6.25 6.25a.75.75 0 101.06 1.06L12 9.56l5.72 5.72a.75.75 0 001.06 0z"></path></svg></div>
+</summary><div class="summary-content card-body docutils">
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ curl -X PUT --header <span class="s1">&#39;Content-Type: application/json&#39;</span> http://localhost:3001/index/penguins/docs/import -d <span class="s1">&#39;</span>
+<span class="s1">{</span>
+<span class="s1">  &quot;file&quot;: &quot;/path/to/penguins.json&quot;</span>
+<span class="s1">}&#39;</span>
+</pre></div>
+</div>
+</div>
+</details><hr class="docutils" />
+<p>Finally, we didn’t create a backend route for it (though we could), but here is the CLI
+command to delete all of the documents in the penguins index for debugging purposes:</p>
+<details class="sphinx-bs dropdown card mb-3">
+<summary class="summary-title card-header">
+CLI Curl - Elasticsearch Index Delete<div class="summary-down docutils">
+<svg version="1.1" width="24" height="24" class="octicon octicon-chevron-down" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M5.22 8.72a.75.75 0 000 1.06l6.25 6.25a.75.75 0 001.06 0l6.25-6.25a.75.75 0 00-1.06-1.06L12 14.44 6.28 8.72a.75.75 0 00-1.06 0z"></path></svg></div>
+<div class="summary-up docutils">
+<svg version="1.1" width="24" height="24" class="octicon octicon-chevron-up" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M18.78 15.28a.75.75 0 000-1.06l-6.25-6.25a.75.75 0 00-1.06 0l-6.25 6.25a.75.75 0 101.06 1.06L12 9.56l5.72 5.72a.75.75 0 001.06 0z"></path></svg></div>
+</summary><div class="summary-content card-body docutils">
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ curl --cacert <span class="s1">&#39;/path/to/elasticsearch-8.3.3/config/certs/http_ca.crt&#39;</span> --user <span class="s1">&#39;elastic:ELASTIC_PASSWORD&#39;</span> -X POST --header <span class="s1">&#39;Content-Type: application/json&#39;</span> https://localhost:9200/penguins/_delete_by_query -d <span class="s1">&#39;</span>
+<span class="s1">{</span>
+<span class="s1">    &quot;query&quot; : {</span>
+<span class="s1">        &quot;match_all&quot; : {}</span>
+<span class="s1">    }</span>
+<span class="s1">}&#39;</span>
+</pre></div>
+</div>
+</div>
+</details><p>All right! You are still here? Then onwards and oxwards!</p>
 </section>
 </section>
 </section>

@@ -9,7 +9,7 @@ Additionally, will also want to create indices to mess around with, as well as e
 so that we don't have to add documents one-by-one (I hear there are tools to do this, but I couldn't find any that 
 worked quickly and easily).
 
-Finally, and while not specifically necessary, we will want to check the status of an index as well.
+Finally, and while not specifically necessary, we will want to check the number of documents in an index as well.
 
 Below each API route has been defined, and code has been provided, with explanation where necessary. Each of these
 routes need to be appended to ``index.js`` in the same manner as the ``/status`` route.
@@ -25,3 +25,21 @@ routes need to be appended to ``index.js`` in the same manner as the ``/status``
 ----
 
 .. include:: ./api/index.include
+
+----
+
+Finally, we didn't create a backend route for it (though we could), but here is the CLI
+command to delete all of the documents in the penguins index for debugging purposes:
+
+.. dropdown:: CLI Curl - Elasticsearch Index Delete
+
+   .. code:: bash
+
+      $ curl --cacert '/path/to/elasticsearch-8.3.3/config/certs/http_ca.crt' --user 'elastic:ELASTIC_PASSWORD' -X POST --header 'Content-Type: application/json' https://localhost:9200/penguins/_delete_by_query -d '
+      {
+          "query" : { 
+              "match_all" : {}
+          }
+      }'
+
+All right! You are still here? Then onwards and oxwards!

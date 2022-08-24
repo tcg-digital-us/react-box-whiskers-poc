@@ -91,6 +91,11 @@ we will need it again later.
 
    *The password for the elastic user is only shown once upon initial startup, so make sure you write it down!*
 
+.. NOTE::
+
+   *Use* ``Ctrl+C`` *to kill Elasticsearch in the command line. It can take a little while
+   to exit gracefully.*
+
 CORS/SOP
 ^^^^^^^^
 
@@ -107,13 +112,6 @@ is killed and started again.
 
    # and if your cluster uses authorization:
    http.cors.allow-headers: X-Requested-With,Content-Type,Content-Length,Authorization
-
-.. NOTE::
-
-   *Use* ``Ctrl+C`` *to kill Elasticsearch in the command line. It can take a little while
-   to exit gracefully.*
-
-   
 
 .. NOTE:: 
 

@@ -14,58 +14,96 @@ the top of our file:
 .. code:: javascript
 
    ...
-   import vegaEmbed from 'vega-embed';
+   import vegaEmbed from 'vega-embed'
    ...
 
-Our visualisation needs to be created in the effect that we created so
+Our visualisation needs to be created in the effect that we added so
 that we can get info from the elastic_json data that was returned and
-build our graph with it. The scehma provided is a basic bar graph schema
-provided by Vega. We are pulling the metrics for our bar graph out of the JSON
-returned by our backend ``/status`` call.
+build our graph with it.
+
+To do this, we should modify our function ``updateElasticStatus()`` so that
+rather than simply getting the status and setting it to a state, it gets the
+status and draws the graph that we need injected into the JSX. First we will
+rename ``updateElasticStatus()`` to ``drawBarGraph()``.
 
 .. code:: JSX
 
+   async function drawBarGraph() {
+     const response = await fetch('http://localhost:3001/status')
+     const elastic_json = await response.json()
+
+     setElasticResponse(elastic_json)
+   }
+
    useEffect(() => {
-     (async () => {
-       const response = await fetch('http://localhost:3001/status');
-       const elastic_json = await response.json();
+     drawBarGraph()
+   }, [])
 
-       // This is the specification for a bar chart found and modified from
-       // code in Vega's docs https://vega.github.io/vega-lite/docs/bar.html
-       //
-       // For the data values in the graph, there are three bars, and we
-       // are getting the values for those three bars from the returned JSON object.
-       //
-       // Encoding will be mentioned later, but the vega documentation should
-       // have everything you need https://vega.github.io/vega-lite/docs/
-       let bar_graph_spec = {
-         $schema: 'https://vega.github.io/schema/vega-lite/v5.json', 
-         description: 'A simple bar chart with embedded data.',
-         data: {
-           values: [
-             {Metric: 'Nodes', Count: elastic_json.number_of_nodes},
-             {Metric: 'Data Nodes', Count: elastic_json.number_of_data_nodes},
-             {Metric: 'Active Primary Shards', Count: elastic_json.active_primary_shards}
-           ]
-         },
-         mark: 'bar',
-         encoding: {
-           x: {field: 'Metric', type: 'ordinal'},
-           y: {field: 'Count', type: 'quantitative'}
-         }
-       };
-       
-       // Create a visualisation and embed it in the html element with id 'Graph'
-       // using our custom specification.
-       vegaEmbed('#Graph', bar_graph_spec); 
+Since we are drawing the graph with Vega rather than displaying the status JSON
+as a string in our returned view, we can remove the ``elastic_response`` state 
+declaration, its setter in ``drawBarGraph()``, and its stringified JSON output in ``return()``:
 
-       setElasticResponse(elastic_json);
-     })();
-   }, []);
+.. code:: JSX
 
-.. NOTE:: 
+   function App() {
 
-   *Make sure that you call* ``vegaEmbed()`` *before calling* ``setElasticResponse()`` *.*
+     async function drawBarGraph() {
+       const response = await fetch('http://localhost:3001/status')
+       const elastic_json = await response.json()
+     }
+
+     useEffect(() => {
+       drawBarGraph()
+     }, [])
+
+     return (
+       <div className="App">
+         <header className="App-header">
+         </header>
+       </div>
+     );
+   }
+
+Now we need to add the Vega specification for our graph and the call to render that
+graph within our ``drawBarGraph()`` function. The specification provided for the bar graph is a schema
+provided by Vega. We are pulling the metrics for our bar graph out of the JSON
+returned by our backend ``/status`` call:
+
+.. code:: JSX
+
+   async function drawBarGraph() {
+     const response = await fetch('http://localhost:3001/status')
+     const elastic_json = await response.json()
+
+     // This is the specification for a bar chart found and modified from
+     // code in Vega's docs https://vega.github.io/vega-lite/docs/bar.html
+     //
+     // For the data values in the graph, there are three bars, and we
+     // are getting the values for those three bars from the returned JSON object.
+     //
+     // Encoding will be mentioned later, but the vega documentation should
+     // have everything you need https://vega.github.io/vega-lite/docs/
+     let bar_graph_spec = {
+       $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
+       description: 'A simple bar chart with embedded data.',
+       data: {
+         values: [
+           {Metric: 'Nodes', Count: elastic_json.number_of_nodes},
+           {Metric: 'Data Nodes', Count: elastic_json.number_of_data_nodes},
+           {Metric: 'Active Primary Shards', Count: elastic_json.active_primary_shards}
+         ]
+       },
+       mark: 'bar',
+       encoding: {
+         x: {field: 'Metric', type: 'ordinal'},
+         y: {field: 'Count', type: 'quantitative'}
+       }
+     };
+
+     // Create a visualisation and embed it in the html element with id 'Graph'
+     // using our custom specification.
+     vegaEmbed('#Graph', bar_graph_spec)
+   }
 
 Since we set Vega to embed under an HTML element with id 'Graph', we
 need to add that HTML element to our returned JSX:
@@ -75,7 +113,6 @@ need to add that HTML element to our returned JSX:
    return (
      <div className="App">
        <header className="App-header">
-         { JSON.stringify(elastic_response) }
          <div id="Graph"></div>
        </header>
      </div>
@@ -84,57 +121,53 @@ need to add that HTML element to our returned JSX:
 Here is what App.js should end up looking like now:
 
 .. code:: JSX
-
+ 
    import logo from './logo.svg';
    import './App.css';
-   import { useState } from 'react';
-   import { useEffect } from 'react';
-   import vegaEmbed from 'vega-embed';
+   import { useState, useEffect } from 'react'
+   import vegaEmbed from 'vega-embed'
 
    function App() {
 
-     const [ elastic_response, setElasticResponse ] = useState({});
+     async function drawBarGraph() {
+       const response = await fetch('http://localhost:3001/status')
+       const elastic_json = await response.json()
+
+       let bar_graph_spec = {
+         $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
+         description: 'A simple bar chart with embedded data.',
+         data: {
+           values: [
+             { Metric: 'Nodes', Count: elastic_json.number_of_nodes },
+             { Metric: 'Data Nodes', Count: elastic_json.number_of_data_nodes },
+             { Metric: 'Active Primary Shards', Count: elastic_json.active_primary_shards }
+           ]
+         },
+         mark: 'bar',
+         encoding: {
+           x: { field: 'Metric', type: 'ordinal' },
+           y: { field: 'Count', type: 'quantitative' }
+         }
+       };
+
+       vegaEmbed('#Graph', bar_graph_spec)
+     }
 
      useEffect(() => {
-       (async () => {
-         const response = await fetch('http://localhost:3001/status');
-
-         const elastic_json = await response.json();
-
-         let yourVlSpec = {
-           $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
-           description: 'A simple bar chart with embedded data.',
-           data: {
-             values: [
-               {Metric: 'Nodes', Count: elastic_json.number_of_nodes},
-               {Metric: 'Data Nodes', Count: elastic_json.number_of_data_nodes},
-               {Metric: 'Active Primary Shards', Count: elastic_json.active_primary_shards}
-             ]
-           },
-           mark: 'bar',
-           encoding: {
-             x: {field: 'Metric', type: 'ordinal'},
-             y: {field: 'Count', type: 'quantitative'}
-           }
-         };
-         
-         vegaEmbed('#Graph', yourVlSpec);
-
-         setElasticResponse(elastic_json);
-       })();
-     }, []);
+       drawBarGraph()
+     }, [])
 
      return (
        <div className="App">
          <header className="App-header">
-           { JSON.stringify(elastic_response) }
            <div id="Graph"></div>
          </header>
        </div>
-     );
+     )
    }
 
    export default App;
+
 
 And that's it for the initial setup! We should now be able to run Elasticsearch, 
 our backend, and our frontend app in concert to display a basic request to

@@ -8,7 +8,7 @@ The Index route provides functionality to create and modify Elasticsearch indice
 
 ----
 
-.. include:: ./api/index/status.rst
+.. include:: ./api/index/count.rst
 
 ----
 

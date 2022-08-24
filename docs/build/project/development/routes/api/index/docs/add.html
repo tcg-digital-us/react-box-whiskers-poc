@@ -69,13 +69,18 @@
              
   <section id="add">
 <h1>Add<a class="headerlink" href="#add" title="Permalink to this headline"></a></h1>
-<p>Adds a single document to an index.</p>
+<p>Adds a single document to an index</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><em>This function adds a document without specifying a type. Specifying a type could
+be done with a query parameter, but this will be an excersize left up to the reader.</em></p>
+</div>
 <div class="sphinx-bs container-lg pb-3 docutils">
 <div class="row docutils">
 <div class="d-flex col-lg-12 p-2 docutils">
 <div class="card w-100 shadow docutils">
 <div class="card-body docutils">
-<p class="card-text"><span class="sphinx-bs badge badge-secondary">PUT</span> /index/docs/add</p>
+<p class="card-text"><span class="sphinx-bs badge badge-secondary">PUT</span> /index/{index_name}/docs/add</p>
 </div>
 </div>
 </div>
@@ -83,17 +88,13 @@
 </div>
 <p><strong>Parameters</strong></p>
 <ul>
-<li><p>body - An object containing two values, the first being the name of the index to
-add to, and the second being the actual data to be added to the index.</p>
+<li><p>index_name - Name of index to which the document will be added.</p></li>
+<li><p>body - An object containing the actual data to be added to the index.</p>
 <p>e.g.:</p>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;index_to_add_to&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="s2">&quot;data&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="s2">&quot;value_1&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">40</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="s2">&quot;value_2&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">12</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="s2">&quot;value_3&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">31</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="p">...</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="s2">&quot;value_1&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">40</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="s2">&quot;value_2&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">12</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="s2">&quot;value_3&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">31</span><span class="p">,</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
@@ -105,21 +106,19 @@ you are trying to add to, even if you are going to leave those fields empty.</p>
 </li>
 </ul>
 <p><strong>Code</strong></p>
-<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">app</span><span class="p">.</span><span class="nx">put</span><span class="p">(</span><span class="s2">&quot;/index/docs/add&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="w"> </span><span class="nx">res</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">app</span><span class="p">.</span><span class="nx">put</span><span class="p">(</span><span class="s2">&quot;/index/:name/docs/add&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="w"> </span><span class="nx">res</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 
-<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">name</span><span class="w"></span>
-<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">data</span><span class="w"></span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">name</span><span class="w"></span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="w"></span>
 
 <span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">name</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">!</span><span class="nx">data</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">({</span><span class="w"> </span><span class="s2">&quot;error&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;index name and data is a required parameter.&quot;</span><span class="w"> </span><span class="p">})</span><span class="w"></span>
+<span class="w">    </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">({</span><span class="w"> </span><span class="s2">&quot;error&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Backend API &#39;/index/{index_name}/docs/add&#39; requires path parameter &#39;name&#39; and body content.&quot;</span><span class="w"> </span><span class="p">})</span><span class="w"></span>
 <span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nx">client</span><span class="p">.</span><span class="nx">index</span><span class="p">({</span><span class="w"></span>
 <span class="w">      </span><span class="nx">index</span><span class="o">:</span><span class="w"> </span><span class="nx">name</span><span class="p">,</span><span class="w"></span>
-<span class="w">      </span><span class="nb">document</span><span class="o">:</span><span class="w"> </span><span class="nx">data</span><span class="w"></span>
+<span class="w">      </span><span class="nb">document</span><span class="o">:</span><span class="w"> </span><span class="nx">data</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nx">refresh</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="w"></span>
 <span class="w">    </span><span class="p">}).</span><span class="nx">then</span><span class="p">((</span><span class="nx">es_res</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-
-<span class="w">      </span><span class="c1">// Refresh the index after adding so that it is aware of our changes.</span><span class="w"></span>
-<span class="w">      </span><span class="nx">client</span><span class="p">.</span><span class="nx">indices</span><span class="p">.</span><span class="nx">refresh</span><span class="p">({</span><span class="w"> </span><span class="nx">index</span><span class="o">:</span><span class="w"> </span><span class="nx">name</span><span class="w"> </span><span class="p">})</span><span class="w"></span>
 <span class="w">      </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">es_res</span><span class="p">)</span><span class="w"></span>
 <span class="w">    </span><span class="p">}).</span><span class="k">catch</span><span class="p">((</span><span class="nx">es_err</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">      </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">es_err</span><span class="p">)</span><span class="w"></span>
@@ -128,7 +127,27 @@ you are trying to add to, even if you are going to leave those fields empty.</p>
 <span class="p">})</span><span class="w"></span>
 </pre></div>
 </div>
-</section>
+<details class="sphinx-bs dropdown card mb-3">
+<summary class="summary-title card-header">
+CLI Curl Example<div class="summary-down docutils">
+<svg version="1.1" width="24" height="24" class="octicon octicon-chevron-down" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M5.22 8.72a.75.75 0 000 1.06l6.25 6.25a.75.75 0 001.06 0l6.25-6.25a.75.75 0 00-1.06-1.06L12 14.44 6.28 8.72a.75.75 0 00-1.06 0z"></path></svg></div>
+<div class="summary-up docutils">
+<svg version="1.1" width="24" height="24" class="octicon octicon-chevron-up" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M18.78 15.28a.75.75 0 000-1.06l-6.25-6.25a.75.75 0 00-1.06 0l-6.25 6.25a.75.75 0 101.06 1.06L12 9.56l5.72 5.72a.75.75 0 001.06 0z"></path></svg></div>
+</summary><div class="summary-content card-body docutils">
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ curl -X PUT --header <span class="s1">&#39;Content-Type: application/json&#39;</span> http://localhost:3001/index/penguins/docs/add -d <span class="s1">&#39;</span>
+<span class="s1">{</span>
+<span class="s1">  &quot;Species&quot;: &quot;Emperor&quot;,</span>
+<span class="s1">  &quot;Island&quot;: &quot;Snow Hill&quot;,</span>
+<span class="s1">  &quot;Beak Length (mm)&quot;: 39.4,</span>
+<span class="s1">  &quot;Beak Depth (mm)&quot;: 18.2,</span>
+<span class="s1">  &quot;Flipper Length (mm)&quot;: 182,</span>
+<span class="s1">  &quot;Body Mass (g)&quot; 3720,</span>
+<span class="s1">  &quot;Sex&quot;: &quot;MALE&quot;</span>
+<span class="s1">}&#39;</span>
+</pre></div>
+</div>
+</div>
+</details></section>
 
 
            </div>
