@@ -137,7 +137,7 @@ module and use it to require the other libraries we need:</p>
 <span class="kd">const</span><span class="w"> </span><span class="nx">pass</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="w"></span>
 
 <span class="c1">// Update with username with elasticsearch installed.</span><span class="w"></span>
-<span class="kd">const</span><span class="w"> </span><span class="nx">credential</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;/home/{username}/elasticsearch-8.3.3/config/certs/http_ca.crt&#39;</span><span class="w"></span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">credential</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;/path/to/elasticsearch-8.3.3/config/certs/http_ca.crt&#39;</span><span class="w"></span>
 
 <span class="c1">// Use Elasticsearch&#39;s self-signed certs for tls:ca.</span><span class="w"></span>
 <span class="kd">const</span><span class="w"> </span><span class="nx">client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Client</span><span class="p">({</span><span class="w"></span>
@@ -196,7 +196,7 @@ given our eact application will be running on 3000:</p>
 <span class="kd">const</span><span class="w"> </span><span class="nx">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;https://localhost:9200&#39;</span><span class="w"></span>
 <span class="kd">const</span><span class="w"> </span><span class="nx">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;elastic&#39;</span><span class="w"></span>
 <span class="kd">const</span><span class="w"> </span><span class="nx">pass</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="w"></span>
-<span class="kd">const</span><span class="w"> </span><span class="nx">credential</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;/home/{username}/elasticsearch-8.3.3/config/certs/http_ca.crt&#39;</span><span class="w"></span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">credential</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;/path/to/elasticsearch-8.3.3/config/certs/http_ca.crt&#39;</span><span class="w"></span>
 
 <span class="kd">const</span><span class="w"> </span><span class="nx">client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Client</span><span class="p">({</span><span class="w"></span>
 <span class="w">  </span><span class="nx">node</span><span class="o">:</span><span class="w"> </span><span class="nx">url</span><span class="p">,</span><span class="w"></span>

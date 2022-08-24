@@ -45,8 +45,8 @@ Client API to get the status of an index:
 
 .. NOTE::
 
-   *This method of Ctrl-click'ing through the source code should work with most modern
-   IDE's, but if it doesn't work for you, then I recommend using Visual Studio Code.*
+   This method of Ctrl-click'ing through the source code should work with most modern
+   IDE's, but if it doesn't work for you, then I recommend using Visual Studio Code.
 
 1. Let's say we wanted to implement a call in ``index.js`` to get the status of an index:
 
@@ -105,8 +105,8 @@ Client API to get the status of an index:
 
    .. NOTE::
 
-      *This is only for instructinoal purposes. In step two above, we see that the* ``get()`` *function returns a promise so that will
-      need to be handled accordingly.*
+      This is only for instructinoal purposes. In step two above, we see that the ``get()`` function returns a promise so that will
+      need to be handled accordingly.
 
 With this in mind, lets continue on to defining our server API!
 

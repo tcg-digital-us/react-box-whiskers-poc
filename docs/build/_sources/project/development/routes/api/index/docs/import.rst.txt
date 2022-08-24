@@ -5,9 +5,9 @@ Imports data contained inside a JSON file into an Elasticsearch index.
 
 .. NOTE:: 
 
-   *This route definition assumes that the documents are not associated with
+   This route definition assumes that the documents are not associated with
    a type. Adding functionality for discerning and uploading documents with
-   uniform or varying types will be an excersize left for the reader.*
+   uniform or varying types will be an excersize left for the reader.
 
 .. panels::
    :container: container-lg pb-3
@@ -50,7 +50,13 @@ Currently the data is in the format:
        "Sex": "MALE"
      },
      {
-       ...
+       "Species": "Adelie",
+       "Island": "Torgersen",
+       "Beak Length (mm)": 39.5,
+       "Beak Depth (mm)": 17.4,
+       "Flipper Length (mm)": 186,
+       "Body Mass (g)": 3800,
+       "Sex": "FEMALE"
      },
      ...
    ]
@@ -71,20 +77,32 @@ Equivalent Elasticsearch CLI API Call:
    ...
    '
 
-In javascript though, the end product that we will be provide will look more like this:
+In javascript we will be creating an equivalent list to pass to the client:
 
 .. code:: javascript
 
    [
-     [
-       { "index":{ "_index": "penguins"} },
-       { "Species": "Adelie", "Island": "Torgersen", "Beak Length (mm)": 39.1, "Beak Depth (mm)": 18.7, "Flipper Length (mm)": 181, "Body Mass (g)": 3750, "Sex": "MALE" }
-     ],
-     [
-       { "index":{ "_index": "penguins"} }
-       { "Species": "Adelie", "Island": "Torgersen", "Beak Length (mm)": 39.5, "Beak Depth (mm)": 17.4, "Flipper Length (mm)": 186, "Body Mass (g)": 3800, "Sex": "FEMALE" }
-     ],
-     ...
+    { index: { _index: "penguins" } },
+    {
+      "Species": "Adelie",
+      "Island": "Torgersen",
+      "Beak Length (mm)": 39.1,
+      "Beak Depth (mm)": 18.7,
+      "Flipper Length (mm)": 181,
+      "Body Mass (g)": 3750,
+      "Sex": "MALE"
+    },
+    { index: { _index: "penguins" } },
+    {
+      "Species": "Adelie",
+      "Island": "Torgersen",
+      "Beak Length (mm)": 39.5,
+      "Beak Depth (mm)": 17.4,
+      "Flipper Length (mm)": 186,
+      "Body Mass (g)": 3800,
+      "Sex": "FEMALE"
+    },
+    ...
    ]
 
 By requiring the filename as a list of objects, we can use ``.flatMap()`` to 
@@ -102,7 +120,7 @@ in a JSON array that we can provide to Elasticsearch for bulk upload.
      const filename = req.body.filename
 
      if (!index || !filename) {
-       res.json({ "error": "Backend API '/index/{index_name}/docs/import' requires path parameter 'index_name' and body parameter 'filename'" })
+       res.json({ "error": "Backend API '/index/{index_name}/docs/import' requires body parameter 'filename'" })
      } else {
 
        // We are assuming here that each entry in our penguins dataset belongs to the
@@ -125,7 +143,15 @@ in a JSON array that we can provide to Elasticsearch for bulk upload.
            refresh: true,
            operations: bulk_operations
          }).then((es_res) => {
-           res.json(es_res)
+
+           // On a successful import, get the count of the index and return that
+           // as part of the success message.
+           client.count({
+             index: index
+           }).then((es_res) => {
+             const response = { "success": "index count is " + es_res.count }
+             res.json(response)
+           })
          }).catch((es_err) => {
            res.json(es_err)
          })

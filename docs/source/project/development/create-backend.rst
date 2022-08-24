@@ -69,7 +69,7 @@ We can now create a new Elasticsearch connection client:
    const pass = ''
 
    // Update with username with elasticsearch installed.
-   const credential = '/home/{username}/elasticsearch-8.3.3/config/certs/http_ca.crt'
+   const credential = '/path/to/elasticsearch-8.3.3/config/certs/http_ca.crt'
 
    // Use Elasticsearch's self-signed certs for tls:ca.
    const client = new Client({
@@ -139,7 +139,7 @@ Here is what we should end up with in ``index.js``:
    const url = 'https://localhost:9200'
    const user = 'elastic'
    const pass = ''
-   const credential = '/home/{username}/elasticsearch-8.3.3/config/certs/http_ca.crt'
+   const credential = '/path/to/elasticsearch-8.3.3/config/certs/http_ca.crt'
 
    const client = new Client({
      node: url,

@@ -23,7 +23,7 @@ Get a list of all documents (up to a given max size) from a given index.
    app.get("/index/:name/docs/all", (req, res) => {
 
      const index_name = req.params.name
-     const return_size = req.query.size
+     var return_size = req.query.size
 
      if (!index_name) {
        res.json({ "error": "Backend API '/index/{index_name}/docs/all' requires path parameter 'index_name' and query parameter 'size'." })
@@ -44,13 +44,13 @@ Get a list of all documents (up to a given max size) from a given index.
 
 .. IMPORTANT::
 
-   *Notice that when we get the response in* ``.then()`` *we don't return its JSON,
-   rather we have to return the list of hits for the search with* ``es_res.hits.hits`` *.*
+   Notice that when we get the response in ``.then()`` we don't return its JSON,
+   rather we have to return the list of hits for the search with ``es_res.hits.hits`` .
 
 .. NOTE::
 
-   *If you want to return more than 10k hits, the size parameter will no longer work,
-   and you will need to modify the implementation of this API call to do so.*
+   If you want to return more than 10k hits, the size parameter will no longer work,
+   and you will need to modify the implementation of this API call to do so.
 
    As per the `Elasticsearch Search API Documentation <https://www.elastic.co/guide/en/elasticsearch/reference/current/search-search.html>`_: "By default, you cannot page through more than 10,000 hits using the from and size parameters. To page through more hits, use the search_after parameter".
 

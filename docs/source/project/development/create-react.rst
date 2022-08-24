@@ -35,8 +35,8 @@ displays the stringified response we will be getting from Elasticsearch:
 
 .. NOTE::
 
-   *The className's that you see here have already been defined 
-   by* ``create-react-app`` *in the* ``src/App.css`` *file.* 
+   The className's that you see here have already been defined 
+   by ``create-react-app`` in the ``src/App.css`` file.
 
 Calls made to a backend are asynchronous in nature, as after making the fetch
 you must wait on the backend to respond. It makes sense then that when the
@@ -126,8 +126,8 @@ makes a fetch call to our ``/status`` API:
 
 .. NOTE:: 
 
-   *Make sure that your* ``useEffect()`` *call takes both the function and dependency
-   array arguments ->* ``useEffect(() => {}, [])`` *.*
+   Make sure that your ``useEffect()`` call takes both the function and dependency
+   array arguments -> ``useEffect(() => {}, [])`` .
 
 The final contents of ``App.js`` should resemble:
 

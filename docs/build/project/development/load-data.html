@@ -128,15 +128,14 @@ the status of the index:</p>
 </pre></div>
 </div>
 <p>Now to import the penguins data to our index:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ curl -X PUT --header <span class="s1">&#39;Content-Type: application/json&#39;</span> http://localhost:3001/index/docs/import -d <span class="s1">&#39;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ curl -X PUT --header <span class="s1">&#39;Content-Type: application/json&#39;</span> http://localhost:3001/index/penguins/docs/import -d <span class="s1">&#39;</span>
 <span class="s1">{</span>
-<span class="s1">  &quot;index&quot;: &quot;penguins&quot;,</span>
-<span class="s1">  &quot;file&quot;: &quot;/path_to_file/penguins.json&quot;</span>
+<span class="s1">  &quot;filename&quot;: &quot;/path/to/penguins.json&quot;</span>
 <span class="s1">}&#39;</span>
 </pre></div>
 </div>
 <p>Another summary response in JSON format should show that the documents were uploaded properly:</p>
-<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"> </span><span class="s2">&quot;status&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;success&quot;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s2">&quot;success&quot;</span><span class="o">:</span><span class="s2">&quot;index count is 344&quot;</span><span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
 <p>We can further check this by checking the count of the index:</p>

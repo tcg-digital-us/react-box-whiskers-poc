@@ -7,8 +7,8 @@ Adds a single document to an index
 
 .. NOTE:: 
 
-   *This function adds a document without specifying a type. Specifying a type could
-   be done with a query parameter, but this will be an excersize left up to the reader.*
+   This function adds a document without specifying a type. Specifying a type could
+   be done with a query parameter, but this will be an excersize left up to the reader.
 
 .. panels::
    :container: container-lg pb-3

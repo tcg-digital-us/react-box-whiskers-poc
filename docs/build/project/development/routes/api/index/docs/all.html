@@ -90,7 +90,7 @@
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;/index/:name/docs/all&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="w"> </span><span class="nx">res</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 
 <span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">index_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">name</span><span class="w"></span>
-<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">return_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">query</span><span class="p">.</span><span class="nx">size</span><span class="w"></span>
+<span class="w">  </span><span class="kd">var</span><span class="w"> </span><span class="nx">return_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">query</span><span class="p">.</span><span class="nx">size</span><span class="w"></span>
 
 <span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">index_name</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">({</span><span class="w"> </span><span class="s2">&quot;error&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Backend API &#39;/index/{index_name}/docs/all&#39; requires path parameter &#39;index_name&#39; and query parameter &#39;size&#39;.&quot;</span><span class="w"> </span><span class="p">})</span><span class="w"></span>
@@ -112,13 +112,13 @@
 </div>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
-<p><em>Notice that when we get the response in</em> <code class="docutils literal notranslate"><span class="pre">.then()</span></code> <em>we don’t return its JSON,
-rather we have to return the list of hits for the search with</em> <code class="docutils literal notranslate"><span class="pre">es_res.hits.hits</span></code> <em>.</em></p>
+<p>Notice that when we get the response in <code class="docutils literal notranslate"><span class="pre">.then()</span></code> we don’t return its JSON,
+rather we have to return the list of hits for the search with <code class="docutils literal notranslate"><span class="pre">es_res.hits.hits</span></code> .</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p><em>If you want to return more than 10k hits, the size parameter will no longer work,
-and you will need to modify the implementation of this API call to do so.</em></p>
+<p>If you want to return more than 10k hits, the size parameter will no longer work,
+and you will need to modify the implementation of this API call to do so.</p>
 <p>As per the <a class="reference external" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/search-search.html">Elasticsearch Search API Documentation</a>: “By default, you cannot page through more than 10,000 hits using the from and size parameters. To page through more hits, use the search_after parameter”.</p>
 </div>
 <details class="sphinx-bs dropdown card mb-3">

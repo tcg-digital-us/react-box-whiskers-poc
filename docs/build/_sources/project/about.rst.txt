@@ -15,8 +15,8 @@ required.
 
 .. NOTE::
 
-   *The finished code for this project is available in our* `GitHub repository <https://github.com/tcg-digital-us/react-vega-elasticsearch>`_ *.*
-   *Before running the frontend and backend in the repo you will need to run* ``npm install`` *to install project dependencies.*
+   The finished code for this project is available in our `GitHub repository <https://github.com/tcg-digital-us/react-vega-elasticsearch>`_ .
+   Before running the frontend and backend in the repo you will need to run ``npm install`` to install project dependencies.
 
 Requirements
 ------------
