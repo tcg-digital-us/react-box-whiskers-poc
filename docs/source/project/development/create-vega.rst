@@ -193,7 +193,7 @@ different terminals:
    $ npm start
 
 The React server should automatically open a new web browser tab
-displaying our web page with a simple Vega Bar Chart! 
+displaying our web page with a simple Vega bar chart! 
 
 If you have any errors, re-start all three applications, in the same order, giving Elasticsearch
 enough time to show a green status before starting the backend. If the issue persits, please open an 
