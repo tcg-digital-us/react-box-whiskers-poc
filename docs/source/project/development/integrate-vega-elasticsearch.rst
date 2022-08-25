@@ -161,7 +161,7 @@ data will later be provided to Vega:
    }
 
 Moving on, we now get to create our Vega visualization. We have to create a Vega specification to provide to 
-``vegaEmbed()`` for our box plot. Specifications can chagne greatly from one graph to the next, so I would very
+``vegaEmbed()`` for our box plot. Specifications can change greatly from one graph to the next, so I would very
 much reccomend taking a look at the Vega documentation and get a good grasp on all of the specification fields
 available. For our purposes, I will provide the specification with a comment explaining its makeup:
 
