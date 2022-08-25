@@ -1,5 +1,5 @@
 
-Create a Vega Visuialisation in React
+Create a Vega Visualization in React
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To start with, we need to install the Vega grammar:
@@ -17,7 +17,7 @@ the top of our file:
    import vegaEmbed from 'vega-embed'
    ...
 
-Our visualisation needs to be created in the effect that we added so
+Our visualization needs to be created in the effect that we added so
 that we can get info from the elastic_json data that was returned and
 build our graph with it.
 
@@ -100,7 +100,7 @@ returned by our backend ``/status`` call:
        }
      };
 
-     // Create a visualisation and embed it in the html element with id 'Graph'
+     // Create a visualization and embed it in the html element with id 'Graph'
      // using our custom specification.
      vegaEmbed('#Graph', bar_graph_spec)
    }
@@ -200,7 +200,7 @@ enough time to show a green status before starting the backend. If the issue per
 `issue on our GitHub repo <https://github.com/tcg-digital-us/react-vega-elasticsearch/issues>`_ and we will try to help.
 
 Next we can do some work to update the elasticsearch data in real time,
-which will redraw and update our visualisation.
+which will redraw and update our visualization.
 
 Resources
 _________
