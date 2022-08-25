@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Create a Vega Visuialisation in React &mdash; react-vega-elasticsearch  documentation</title>
+  <title>Create a Vega Visualization in React &mdash; react-vega-elasticsearch  documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/panels-bootstrap.5fd3999ee7762ccc51105388f4a9d115.css" type="text/css" />
@@ -46,7 +46,7 @@
 <li class="toctree-l2"><a class="reference internal" href="elasticsearch-setup.html">Download and Manage an Elasticsearch Instance</a></li>
 <li class="toctree-l2"><a class="reference internal" href="create-backend.html">Create a Basic NodeJS Elasticsearch Backend</a></li>
 <li class="toctree-l2"><a class="reference internal" href="create-react.html">Create A Basic React application</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Create a Vega Visuialisation in React</a><ul>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Create a Vega Visualization in React</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#resources">Resources</a></li>
 </ul>
 </li>
@@ -74,7 +74,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../development.html">Development</a> &raquo;</li>
-      <li>Create a Vega Visuialisation in React</li>
+      <li>Create a Vega Visualization in React</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/project/development/create-vega.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -84,8 +84,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="create-a-vega-visuialisation-in-react">
-<h1>Create a Vega Visuialisation in React<a class="headerlink" href="#create-a-vega-visuialisation-in-react" title="Permalink to this headline"></a></h1>
+  <section id="create-a-vega-visualization-in-react">
+<h1>Create a Vega Visualization in React<a class="headerlink" href="#create-a-vega-visualization-in-react" title="Permalink to this headline"></a></h1>
 <p>To start with, we need to install the Vega grammar:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ npm install vega vega-lite vega-embed
 </pre></div>
@@ -97,7 +97,7 @@ the top of our file:</p>
 <span class="p">...</span><span class="w"></span>
 </pre></div>
 </div>
-<p>Our visualisation needs to be created in the effect that we added so
+<p>Our visualization needs to be created in the effect that we added so
 that we can get info from the elastic_json data that was returned and
 build our graph with it.</p>
 <p>To do this, we should modify our function <code class="docutils literal notranslate"><span class="pre">updateElasticStatus()</span></code> so that
@@ -172,7 +172,7 @@ returned by our backend <code class="docutils literal notranslate"><span class="
 <span class="w">    </span><span class="p">}</span><span class="w"></span>
 <span class="w">  </span><span class="p">};</span><span class="w"></span>
 
-<span class="w">  </span><span class="c1">// Create a visualisation and embed it in the html element with id &#39;Graph&#39;</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// Create a visualization and embed it in the html element with id &#39;Graph&#39;</span><span class="w"></span>
 <span class="w">  </span><span class="c1">// using our custom specification.</span><span class="w"></span>
 <span class="w">  </span><span class="nx">vegaEmbed</span><span class="p">(</span><span class="s1">&#39;#Graph&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">bar_graph_spec</span><span class="p">)</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
@@ -238,8 +238,8 @@ need to add that HTML element to our returned JSX:</p>
 </pre></div>
 </div>
 <p>And that’s it for the initial setup! We should now be able to run Elasticsearch,
-our backend, and our frontend app in concert to display a basic request to
-Elasticsearch on our webpage. It is easiest to do this with three
+our backend, and our frontend app in concert to display a Vega visualization built from
+a basic request to our Elasticsearch-connected backend. It is easiest to do this with three
 different terminals:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Terminal 1</span>
 $ <span class="nb">cd</span> ~/vre-tutorial/elasticsearch-8.3.3
@@ -257,12 +257,12 @@ $ npm start
 </pre></div>
 </div>
 <p>The React server should automatically open a new web browser tab
-displaying our web page with a simple Vega Bar Chart!</p>
+displaying our web page with a simple Vega bar chart!</p>
 <p>If you have any errors, re-start all three applications, in the same order, giving Elasticsearch
 enough time to show a green status before starting the backend. If the issue persits, please open an
 <a class="reference external" href="https://github.com/tcg-digital-us/react-vega-elasticsearch/issues">issue on our GitHub repo</a> and we will try to help.</p>
 <p>Next we can do some work to update the elasticsearch data in real time,
-which will redraw and update our visualisation.</p>
+which will redraw and update our visualization.</p>
 <section id="resources">
 <h2>Resources<a class="headerlink" href="#resources" title="Permalink to this headline"></a></h2>
 <ul class="simple">

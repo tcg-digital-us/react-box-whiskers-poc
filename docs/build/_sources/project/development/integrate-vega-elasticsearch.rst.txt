@@ -75,7 +75,7 @@ relevant, and rename ``drawBarGraph()`` to ``drawBoxWhiskersPlot()`` to reflect 
 
    function App() {
 
-     const [ last_elastic_response, setLastElasticResponse ] = useState({});
+     const [ last_elastic_response, setLastElasticResponse ] = useState({})
  
      async function drawBoxWhiskersPlot() {
        const response = await fetch('http://localhost:3001/status')
@@ -161,8 +161,8 @@ data will later be provided to Vega:
    }
 
 Moving on, we now get to create our Vega visualization. We have to create a Vega specification to provide to 
-``vegaEmbed()`` for our box plot. Specifications can chagne greatly from one graph to the next, so I would very
-much reccomend taking a look at the Vega documentation and get a good grasp on all of the specification fields
+``vegaEmbed()`` for our box plot. Specifications can change greatly from one graph to the next, so I would very
+much reccomend taking a look at the Vega documentation to get a good grasp on all of the specification fields
 available. For our purposes, I will provide the specification with a comment explaining its makeup:
 
 .. code:: JSX
@@ -201,8 +201,6 @@ available. For our purposes, I will provide the specification with a comment exp
        // X to reflext the 'Body Mass (g)' with
        // a quantitative (numeric) type.
        const box_whiskers_spec = {
-         width: "container",
-         height: {"step": 30},
          data: {
            values: box_plot_data
          },

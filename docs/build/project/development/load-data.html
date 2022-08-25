@@ -46,7 +46,7 @@
 <li class="toctree-l2"><a class="reference internal" href="elasticsearch-setup.html">Download and Manage an Elasticsearch Instance</a></li>
 <li class="toctree-l2"><a class="reference internal" href="create-backend.html">Create a Basic NodeJS Elasticsearch Backend</a></li>
 <li class="toctree-l2"><a class="reference internal" href="create-react.html">Create A Basic React application</a></li>
-<li class="toctree-l2"><a class="reference internal" href="create-vega.html">Create a Vega Visuialisation in React</a></li>
+<li class="toctree-l2"><a class="reference internal" href="create-vega.html">Create a Vega Visualization in React</a></li>
 <li class="toctree-l2"><a class="reference internal" href="define-api.html">Further Define the Backend API</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Loading Datasets Into Elasticsearch</a></li>
 <li class="toctree-l2"><a class="reference internal" href="integrate-vega-elasticsearch.html">Incorporate Real-Time Elasticsearch Data Into Vega Visualisation</a></li>
@@ -137,6 +137,14 @@ the status of the index:</p>
 <p>Another summary response in JSON format should show that the documents were uploaded properly:</p>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s2">&quot;success&quot;</span><span class="o">:</span><span class="s2">&quot;index count is 344&quot;</span><span class="p">}</span><span class="w"></span>
 </pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you get the error:</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s2">&quot;code&quot;</span><span class="o">:</span><span class="s2">&quot;MODULE_NOT_FOUND&quot;</span><span class="p">,</span><span class="s2">&quot;requireStack&quot;</span><span class="o">:</span><span class="p">[</span><span class="s2">&quot;/some/path/to/file.js&quot;</span><span class="p">]}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Then it is highly likely that your filepath pointing to the penguins.json file is incorrect.</p>
 </div>
 <p>We can further check this by checking the count of the index:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ curl -X GET http://localhost:3001/index/penguins/count

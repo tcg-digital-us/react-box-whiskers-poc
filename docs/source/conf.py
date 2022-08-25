@@ -13,9 +13,10 @@ author = 'Anthony Mesa'
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = ['sphinx_js', 'sphinx_panels']
+# 'sphinx_js'
+extensions = ['sphinx_panels']
 
-js_source_path = '../../elastic-api-backend/'
+# js_source_path = '../../elastic-api-backend/'
 
 templates_path = ['_templates']
 exclude_patterns = []

@@ -46,7 +46,7 @@
 <li class="toctree-l2"><a class="reference internal" href="elasticsearch-setup.html">Download and Manage an Elasticsearch Instance</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Create a Basic NodeJS Elasticsearch Backend</a></li>
 <li class="toctree-l2"><a class="reference internal" href="create-react.html">Create A Basic React application</a></li>
-<li class="toctree-l2"><a class="reference internal" href="create-vega.html">Create a Vega Visuialisation in React</a></li>
+<li class="toctree-l2"><a class="reference internal" href="create-vega.html">Create a Vega Visualization in React</a></li>
 <li class="toctree-l2"><a class="reference internal" href="define-api.html">Further Define the Backend API</a></li>
 <li class="toctree-l2"><a class="reference internal" href="load-data.html">Loading Datasets Into Elasticsearch</a></li>
 <li class="toctree-l2"><a class="reference internal" href="integrate-vega-elasticsearch.html">Incorporate Real-Time Elasticsearch Data Into Vega Visualisation</a></li>
@@ -92,7 +92,7 @@ $ npm init -y
 </pre></div>
 </div>
 <p>To ensure that the project will be run as an es6 module, we need to add
-<code class="docutils literal notranslate"><span class="pre">&quot;type&quot;:</span> <span class="pre">&quot;module&quot;</span></code> to the package.json configuration. The <code class="docutils literal notranslate"><span class="pre">...</span></code> just
+<code class="docutils literal notranslate"><span class="pre">&quot;type&quot;:</span> <span class="pre">&quot;module&quot;</span></code> to the <code class="docutils literal notranslate"><span class="pre">package.json</span></code> configuration. The <code class="docutils literal notranslate"><span class="pre">...</span></code> just
 denotes that there may or may not be other values before and after the
 type is defined (it just has to be defined at the same indent level as
 ‘name’):</p>
@@ -162,8 +162,8 @@ required to bypass SOP issues.</p>
 </div>
 <p>Also, we will cause our App to use two Express settings that will allow us to
 parse and access the JSON bodies that are sent to our API endpoints:</p>
-<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">Express</span><span class="p">.</span><span class="nx">json</span><span class="p">());</span><span class="w"></span>
-<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">Express</span><span class="p">.</span><span class="nx">urlencoded</span><span class="p">({</span><span class="w"> </span><span class="nx">extended</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="p">}));</span><span class="w"></span>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">Express</span><span class="p">.</span><span class="nx">json</span><span class="p">())</span><span class="w"></span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">Express</span><span class="p">.</span><span class="nx">urlencoded</span><span class="p">({</span><span class="w"> </span><span class="nx">extended</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="p">}))</span><span class="w"></span>
 </pre></div>
 </div>
 <p>Next, we will add a single route to our application that will return
@@ -180,7 +180,7 @@ a JSON response from Elasticsearch:</p>
 <p>Finally, we will add a listener for incoming requests and set it on port 3001,
 given our eact application will be running on 3000:</p>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">app</span><span class="p">.</span><span class="nx">listen</span><span class="p">(</span><span class="mf">3001</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;listening on port 3001!&#39;</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;listening on port 3001!&#39;</span><span class="p">)</span><span class="w"></span>
 <span class="p">})</span><span class="w"></span>
 </pre></div>
 </div>
@@ -190,6 +190,7 @@ given our eact application will be running on 3000:</p>
 
 <span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">createRequire</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;module&#39;</span><span class="w"></span>
 <span class="kd">const</span><span class="w"> </span><span class="nx">require</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">createRequire</span><span class="p">(</span><span class="k">import</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">url</span><span class="p">)</span><span class="w"></span>
+
 <span class="kd">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Client</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">require</span><span class="p">(</span><span class="s1">&#39;@elastic/elasticsearch&#39;</span><span class="p">)</span><span class="w"></span>
 <span class="kd">const</span><span class="w"> </span><span class="nx">fs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">require</span><span class="p">(</span><span class="s1">&#39;fs&#39;</span><span class="p">)</span><span class="w"></span>
 
@@ -212,6 +213,8 @@ given our eact application will be running on 3000:</p>
 
 <span class="kd">const</span><span class="w"> </span><span class="nx">app</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">Express</span><span class="p">()</span><span class="w"></span>
 <span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">cors</span><span class="p">())</span><span class="w"></span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">Express</span><span class="p">.</span><span class="nx">json</span><span class="p">())</span><span class="w"></span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">Express</span><span class="p">.</span><span class="nx">urlencoded</span><span class="p">({</span><span class="w"> </span><span class="nx">extended</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="p">}))</span><span class="w"></span>
 
 <span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;/status&quot;</span><span class="p">,</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="w"> </span><span class="nx">res</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">  </span><span class="nx">client</span><span class="p">.</span><span class="nx">cluster</span><span class="p">.</span><span class="nx">health</span><span class="p">().</span><span class="nx">then</span><span class="p">((</span><span class="nx">es_res</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>

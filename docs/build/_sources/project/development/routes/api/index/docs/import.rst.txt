@@ -128,7 +128,7 @@ in a JSON array that we can provide to Elasticsearch for bulk upload.
        const json_header = { "index": { "_index": index } }
 
        // Require doesn't return a promise, so we need to use a try/catch statement
-       // to catch an error when loading the file.
+       // to catch an error when loading and parsing the file.
        try {
          const data = require(filename)
 
@@ -148,8 +148,8 @@ in a JSON array that we can provide to Elasticsearch for bulk upload.
            // as part of the success message.
            client.count({
              index: index
-           }).then((es_res) => {
-             const response = { "success": "index count is " + es_res.count }
+           }).then((count_res) => {
+             const response = { "success": "index count is " + count_res.count }
              res.json(response)
            })
          }).catch((es_err) => {

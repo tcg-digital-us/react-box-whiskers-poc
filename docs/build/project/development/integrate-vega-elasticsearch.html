@@ -46,7 +46,7 @@
 <li class="toctree-l2"><a class="reference internal" href="elasticsearch-setup.html">Download and Manage an Elasticsearch Instance</a></li>
 <li class="toctree-l2"><a class="reference internal" href="create-backend.html">Create a Basic NodeJS Elasticsearch Backend</a></li>
 <li class="toctree-l2"><a class="reference internal" href="create-react.html">Create A Basic React application</a></li>
-<li class="toctree-l2"><a class="reference internal" href="create-vega.html">Create a Vega Visuialisation in React</a></li>
+<li class="toctree-l2"><a class="reference internal" href="create-vega.html">Create a Vega Visualization in React</a></li>
 <li class="toctree-l2"><a class="reference internal" href="define-api.html">Further Define the Backend API</a></li>
 <li class="toctree-l2"><a class="reference internal" href="load-data.html">Loading Datasets Into Elasticsearch</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Incorporate Real-Time Elasticsearch Data Into Vega Visualisation</a></li>
@@ -147,7 +147,7 @@ our index has been updated and our module should reload.</p>
 relevant, and rename <code class="docutils literal notranslate"><span class="pre">drawBarGraph()</span></code> to <code class="docutils literal notranslate"><span class="pre">drawBoxWhiskersPlot()</span></code> to reflect our new goal:</p>
 <div class="highlight-JSX notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span><span class="w"> </span><span class="nx">App</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 
-<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="nx">last_elastic_response</span><span class="p">,</span><span class="w"> </span><span class="nx">setLastElasticResponse</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useState</span><span class="p">({});</span><span class="w"></span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="nx">last_elastic_response</span><span class="p">,</span><span class="w"> </span><span class="nx">setLastElasticResponse</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useState</span><span class="p">({})</span><span class="w"></span>
 
 <span class="w">  </span><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">drawBoxWhiskersPlot</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;http://localhost:3001/status&#39;</span><span class="p">)</span><span class="w"></span>
@@ -228,8 +228,8 @@ data will later be provided to Vega:</p>
 </pre></div>
 </div>
 <p>Moving on, we now get to create our Vega visualization. We have to create a Vega specification to provide to
-<code class="docutils literal notranslate"><span class="pre">vegaEmbed()</span></code> for our box plot. Specifications can chagne greatly from one graph to the next, so I would very
-much reccomend taking a look at the Vega documentation and get a good grasp on all of the specification fields
+<code class="docutils literal notranslate"><span class="pre">vegaEmbed()</span></code> for our box plot. Specifications can change greatly from one graph to the next, so I would very
+much reccomend taking a look at the Vega documentation to get a good grasp on all of the specification fields
 available. For our purposes, I will provide the specification with a comment explaining its makeup:</p>
 <div class="highlight-JSX notranslate"><div class="highlight"><pre><span></span><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">drawBoxWhiskersPlot</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">plot_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;penguins&#39;</span><span class="w"></span>
@@ -265,8 +265,6 @@ available. For our purposes, I will provide the specification with a comment exp
 <span class="w">    </span><span class="c1">// X to reflext the &#39;Body Mass (g)&#39; with</span><span class="w"></span>
 <span class="w">    </span><span class="c1">// a quantitative (numeric) type.</span><span class="w"></span>
 <span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">box_whiskers_spec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">      </span><span class="nx">width</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;container&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">      </span><span class="nx">height</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="s2">&quot;step&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">30</span><span class="p">},</span><span class="w"></span>
 <span class="w">      </span><span class="nx">data</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nx">values</span><span class="o">:</span><span class="w"> </span><span class="nx">box_plot_data</span><span class="w"></span>
 <span class="w">      </span><span class="p">},</span><span class="w"></span>

@@ -19,7 +19,6 @@ This project requires 3 major components:
 * The third and final componnent is the front-end, our React application itself, 
   which we will connect to Elasticsearch by using the API we design for our back-end.
 
-
 This project is designed to create a minimum viable proof of concept, so only the 
 API calls required that help us build our specific graph will be defined, but by the
 end of this, you should be able to design any other API calls you might need after.

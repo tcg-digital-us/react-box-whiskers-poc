@@ -46,7 +46,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../elasticsearch-setup.html">Download and Manage an Elasticsearch Instance</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../create-backend.html">Create a Basic NodeJS Elasticsearch Backend</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../create-react.html">Create A Basic React application</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../create-vega.html">Create a Vega Visuialisation in React</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../create-vega.html">Create a Vega Visualization in React</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../define-api.html">Further Define the Backend API</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="../define-api.html#demystifying-the-elasticsearch-client">Demystifying the Elasticsearch Client</a><ul class="current">
 <li class="toctree-l4 current"><a class="current reference internal" href="#">Create API Routes</a></li>
@@ -586,7 +586,7 @@ in a JSON array that we can provide to Elasticsearch for bulk upload.</p>
 <span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">json_header</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s2">&quot;index&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s2">&quot;_index&quot;</span><span class="o">:</span><span class="w"> </span><span class="nx">index</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
 
 <span class="w">    </span><span class="c1">// Require doesn&#39;t return a promise, so we need to use a try/catch statement</span><span class="w"></span>
-<span class="w">    </span><span class="c1">// to catch an error when loading the file.</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// to catch an error when loading and parsing the file.</span><span class="w"></span>
 <span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">require</span><span class="p">(</span><span class="nx">filename</span><span class="p">)</span><span class="w"></span>
 
@@ -606,8 +606,8 @@ in a JSON array that we can provide to Elasticsearch for bulk upload.</p>
 <span class="w">        </span><span class="c1">// as part of the success message.</span><span class="w"></span>
 <span class="w">        </span><span class="nx">client</span><span class="p">.</span><span class="nx">count</span><span class="p">({</span><span class="w"></span>
 <span class="w">          </span><span class="nx">index</span><span class="o">:</span><span class="w"> </span><span class="nx">index</span><span class="w"></span>
-<span class="w">        </span><span class="p">}).</span><span class="nx">then</span><span class="p">((</span><span class="nx">es_res</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">          </span><span class="kd">const</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s2">&quot;success&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;index count is &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">es_res</span><span class="p">.</span><span class="nx">count</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="p">}).</span><span class="nx">then</span><span class="p">((</span><span class="nx">count_res</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">          </span><span class="kd">const</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s2">&quot;success&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;index count is &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">count_res</span><span class="p">.</span><span class="nx">count</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
 <span class="w">          </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">response</span><span class="p">)</span><span class="w"></span>
 <span class="w">        </span><span class="p">})</span><span class="w"></span>
 <span class="w">      </span><span class="p">}).</span><span class="k">catch</span><span class="p">((</span><span class="nx">es_err</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
