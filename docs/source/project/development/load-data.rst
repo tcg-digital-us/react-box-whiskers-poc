@@ -64,6 +64,16 @@ Another summary response in JSON format should show that the documents were uplo
 .. code:: javascript
  
    {"success":"index count is 344"}
+
+.. NOTE::
+
+   If you get the error:
+
+   .. code:: javascript
+
+      {"code":"MODULE_NOT_FOUND","requireStack":["/some/path/to/file.js"]}
+
+   Then it is highly likely that your filepath pointing to the penguins.json file is incorrect.
    
 We can further check this by checking the count of the index:
 
