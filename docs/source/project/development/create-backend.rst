@@ -98,8 +98,8 @@ parse and access the JSON bodies that are sent to our API endpoints:
 
 .. code:: javascript
 
-   app.use(Express.json());
-   app.use(Express.urlencoded({ extended: true }));
+   app.use(Express.json())
+   app.use(Express.urlencoded({ extended: true }))
 
 
 Next, we will add a single route to our application that will return 
