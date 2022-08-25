@@ -18,7 +18,7 @@ page of the tutorial, you have to add two fields to the graph's specification:
 
 I will just provide the CSS styling here that will make it look like the picture
 displayed on the first page of this tutorial. These CSS properties just need to
-be pasted into App.css after the properties that React has already created:
+be pasted into ``src/App.css`` after the properties that React has already created:
 
 .. code:: CSS 
  
