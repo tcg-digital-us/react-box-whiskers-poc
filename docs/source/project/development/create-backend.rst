@@ -121,7 +121,7 @@ given our eact application will be running on 3000:
 .. code:: javascript
 
    app.listen(3001, () => {
-     console.log('listening on port 3001!');
+     console.log('listening on port 3001!')
    })
 
 Here is what we should end up with in ``index.js``:
