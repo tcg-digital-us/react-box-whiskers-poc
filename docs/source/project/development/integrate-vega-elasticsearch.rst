@@ -75,7 +75,7 @@ relevant, and rename ``drawBarGraph()`` to ``drawBoxWhiskersPlot()`` to reflect 
 
    function App() {
 
-     const [ last_elastic_response, setLastElasticResponse ] = useState({});
+     const [ last_elastic_response, setLastElasticResponse ] = useState({})
  
      async function drawBoxWhiskersPlot() {
        const response = await fetch('http://localhost:3001/status')
