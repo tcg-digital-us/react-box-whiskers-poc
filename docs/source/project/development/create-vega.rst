@@ -170,8 +170,8 @@ Here is what App.js should end up looking like now:
 
 
 And that's it for the initial setup! We should now be able to run Elasticsearch, 
-our backend, and our frontend app in concert to display a basic request to
-Elasticsearch on our webpage. It is easiest to do this with three
+our backend, and our frontend app in concert to display a Vega visualization built from
+a basic request to our Elasticsearch-connected backend. It is easiest to do this with three
 different terminals:
 
 .. code:: bash
