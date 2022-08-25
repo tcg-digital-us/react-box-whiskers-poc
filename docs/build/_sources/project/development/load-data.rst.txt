@@ -54,18 +54,17 @@ Now to import the penguins data to our index:
 
 .. code:: bash
 
-   $ curl -X PUT --header 'Content-Type: application/json' http://localhost:3001/index/docs/import -d '
+   $ curl -X PUT --header 'Content-Type: application/json' http://localhost:3001/index/penguins/docs/import -d '
    {
-     "index": "penguins",
-     "file": "/path_to_file/penguins.json"
+     "filename": "/path/to/penguins.json"
    }'
 
 Another summary response in JSON format should show that the documents were uploaded properly:
 
 .. code:: javascript
  
-   { "status": "success" }
-
+   {"success":"index count is 344"}
+   
 We can further check this by checking the count of the index:
 
 .. code:: bash

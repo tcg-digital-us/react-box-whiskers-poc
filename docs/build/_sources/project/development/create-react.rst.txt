@@ -35,8 +35,8 @@ displays the stringified response we will be getting from Elasticsearch:
 
 .. NOTE::
 
-   *The className's that you see here have already been defined 
-   by* ``create-react-app`` *in the* ``src/App.css`` *file.* 
+   The className's that you see here have already been defined 
+   by ``create-react-app`` in the ``src/App.css`` file.
 
 Calls made to a backend are asynchronous in nature, as after making the fetch
 you must wait on the backend to respond. It makes sense then that when the
@@ -47,7 +47,8 @@ want its stringified value to be displayed in our view.
 
 React makes this easy to accomplish by using states to keep track of the variables 
 whose changes we want to refresh our module or to cause other code to execute. We 
-need to import this state functionality (since many imports are available at the
+need to import this state functionality at the top of our file below the imports
+that already exist (since many imports are available at the
 ``'react'`` level, we need to surround it in brackets):
 
 .. code:: JSX
@@ -64,7 +65,7 @@ that every time the response changes our module is re-rendered:
    function App() {
      // Initialize the response to an empty JSON object so that it
      // doesnt get initialized as undefined.
-     const [elastic_response, setElasticResponse] = useState({});
+     const [elastic_response, setElasticResponse] = useState({})
 
      return (
        <div className="App">
@@ -88,13 +89,22 @@ alongside our ``useState`` import :
    import { useState, useEffect } from 'react'
    ...
 
-Now we can develop our effect that defines and runs an asynchronous function.
+Now we can develop our effect that runs a new function called ``updateElasticStatus`` that
+makes a fetch call to our ``/status`` API:
 
 .. code:: JSX
 
    function App() {
-     const [elastic_response, setElasticResponse] = useState({});
+     const [elastic_response, setElasticResponse] = useState({})
      
+     async function updateElasticStatus() {
+       const response = await fetch('http://localhost:3001/status')
+       const elastic_json = await response.json()
+
+       // Set the elastic_response state using the setter provided.
+       setElasticResponse(elastic_json)
+     }
+
      // useEffect requires two arguments, the function to be run, and
      // the dependency array to which the effect applies. This dependency
      // array is simply a list of the states that once changed will cause
@@ -102,18 +112,8 @@ Now we can develop our effect that defines and runs an asynchronous function.
      // causes the effect to run only once, when our module is initially 
      // attached to the application.
      useEffect(() => {
-
-       // Here we are defining and running an anonymous function
-       // since only function objects can be provided to useEffect, 
-       // not promises, and we need to wait for the backend to respond.
-       (async () => {
-         const response = await fetch('http://localhost:3001/status');
-         const elastic_json = await response.json();
-
-         // Set the elastic_response state using the setter provided.
-         setElasticResponse(elastic_json);
-       })();
-     }, []); 
+       updateElasticStatus()
+     }, [])
 
      return (
        <div className="App">
@@ -126,11 +126,42 @@ Now we can develop our effect that defines and runs an asynchronous function.
 
 .. NOTE:: 
 
-   *Make sure that your* ``useEffect()`` *call takes both the function and dependency
-   array arguments ->* ``useEffect(() => {}, [])`` *.*
+   Make sure that your ``useEffect()`` call takes both the function and dependency
+   array arguments -> ``useEffect(() => {}, [])`` .
 
-   *Also ensure that the anonymous function within* ``useEffect()`` *ends in* ``()`` *so
-   that the function is run where we have defined it* ``(() => { return; })()`` *.*
+The final contents of ``App.js`` should resemble:
+
+.. code:: JSX 
+
+   import logo from './logo.svg';
+   import './App.css';
+   import { useState, useEffect } from 'react'
+
+   function App() {
+
+     const [elastic_response, setElasticResponse] = useState({})
+
+     async function updateElasticStatus() {
+       const response = await fetch('http://localhost:3001/status')
+       const elastic_json = await response.json()
+
+       setElasticResponse(elastic_json)
+     }
+
+     useEffect(() => {
+       updateElasticStatus()
+     }, [])
+
+     return (
+       <div className="App">
+         <header className="App-header">
+           { JSON.stringify(elastic_response) }
+         </header>
+       </div>
+     )
+   }
+
+   export default App;
 
 We should now be at a point now where if we ran everything we have setup
 thus far, we would have a React webpage that displays the JSON returned

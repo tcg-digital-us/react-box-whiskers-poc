@@ -24,10 +24,13 @@ This project is designed to create a minimum viable proof of concept, so only th
 API calls required that help us build our specific graph will be defined, but by the
 end of this, you should be able to design any other API calls you might need after.
 
-This project guide was created within Windows WSL Ubuntu, so it should work easily for
+This guide was created within Windows WSL Ubuntu, so it should work easily for
 Linux or WSL, where you may have to make some modifications to this process when
 working on MacOS.
-   
+
+All of the final code for this project is available alongside the documentation in 
+our `GitHub repository <https://github.com/tcg-digital-us/react-vega-elasticsearch>`_.
+
 .. raw:: html
 
    <center>

@@ -1,30 +1,36 @@
 Import
 <<<<<<
 
-Imports data of a single type contained inside a JSON file into an Elasticsearch index.
+Imports data contained inside a JSON file into an Elasticsearch index.
+
+.. NOTE:: 
+
+   This route definition assumes that the documents are not associated with
+   a type. Adding functionality for discerning and uploading documents with
+   uniform or varying types will be an excersize left for the reader.
 
 .. panels::
    :container: container-lg pb-3
    :column: col-lg-12 p-2
 
-   :badge:`PUT,badge-secondary` /index/docs/import
+   :badge:`PUT,badge-secondary` /index/{index_name}/docs/import
 
 **Parameters**
 
-* body - An object containing the index name, document type (optional), and filename from
-  which the data will be uploaded.
+* index_name - Name of index to which the documents will be imported.
+
+* body - An object containing the filename from which the data will be uploaded.
 
   e.g.:
 
   .. code:: javascript
 
      {
-       "index": "penguins",
-       "file": "/path_to_file/penguins.json"
+       "file": "/path/to/penguins.json"
      }
 
-The data that we plan to import is an array of
-JSON objects within ``penguins.json``, and we will assume that currently this is the only data format that we
+The data that we plan to import is an array of JSON objects within ``penguins.json``,
+and we will assume that currently this is the only data format that we
 will be using to upload. We can import this file as a list of
 documents to add to a penguins index, but to do so we need to manipulate the
 data in a way that makes Elasticsearch's bulk upload function happy.
@@ -44,13 +50,19 @@ Currently the data is in the format:
        "Sex": "MALE"
      },
      {
-       ...
+       "Species": "Adelie",
+       "Island": "Torgersen",
+       "Beak Length (mm)": 39.5,
+       "Beak Depth (mm)": 17.4,
+       "Flipper Length (mm)": 186,
+       "Body Mass (g)": 3800,
+       "Sex": "FEMALE"
      },
      ...
    ]
 
 But elasticsearch's bulk function requires each document in the data to have the
-index and type defined for each document. You can see how this works with the
+index and, optionally, type defined for each document. You can see how this works with the
 command line equivalent of this API call:
 
 Equivalent Elasticsearch CLI API Call:
@@ -65,20 +77,32 @@ Equivalent Elasticsearch CLI API Call:
    ...
    '
 
-In javascript though, the end product that we will be provide will look more like this:
+In javascript we will be creating an equivalent list to pass to the client:
 
 .. code:: javascript
 
    [
-     [
-       { "index":{ "_index": "penguins"} },
-       { "Species": "Adelie", "Island": "Torgersen", "Beak Length (mm)": 39.1, "Beak Depth (mm)": 18.7, "Flipper Length (mm)": 181, "Body Mass (g)": 3750, "Sex": "MALE" }
-     ],
-     [
-       { "index":{ "_index": "penguins"} }
-       { "Species": "Adelie", "Island": "Torgersen", "Beak Length (mm)": 39.5, "Beak Depth (mm)": 17.4, "Flipper Length (mm)": 186, "Body Mass (g)": 3800, "Sex": "FEMALE" }
-     ],
-     ...
+    { index: { _index: "penguins" } },
+    {
+      "Species": "Adelie",
+      "Island": "Torgersen",
+      "Beak Length (mm)": 39.1,
+      "Beak Depth (mm)": 18.7,
+      "Flipper Length (mm)": 181,
+      "Body Mass (g)": 3750,
+      "Sex": "MALE"
+    },
+    { index: { _index: "penguins" } },
+    {
+      "Species": "Adelie",
+      "Island": "Torgersen",
+      "Beak Length (mm)": 39.5,
+      "Beak Depth (mm)": 17.4,
+      "Flipper Length (mm)": 186,
+      "Body Mass (g)": 3800,
+      "Sex": "FEMALE"
+    },
+    ...
    ]
 
 By requiring the filename as a list of objects, we can use ``.flatMap()`` to 
@@ -89,28 +113,59 @@ in a JSON array that we can provide to Elasticsearch for bulk upload.
 
 .. code:: javascript
 
-   app.put("/index/docs/import", async (req, res) => {
-     const index = req.body.index
-     const type = req.body.type
-     const filename = req.body.file
-     const data = require(filename)
+   // Some parts of this route could be refactored/abstracted out for
+   // more modularity, but this will be left up to the reader.
+   app.put("/index/:name/docs/import", async (req, res) => {
+     const index = req.params.name
+     const filename = req.body.filename
 
-     const json_header = { "index":{ "_index": index} }
+     if (!index || !filename) {
+       res.json({ "error": "Backend API '/index/{index_name}/docs/import' requires body parameter 'filename'" })
+     } else {
 
-     if(type) {
-       json_header['index']['_type'] = type
+       // We are assuming here that each entry in our penguins dataset belongs to the
+       // same index, so we are giving each index definition the same value.
+       const json_header = { "index": { "_index": index } }
+
+       // Require doesn't return a promise, so we need to use a try/catch statement
+       // to catch an error when loading the file.
+       try {
+         const data = require(filename)
+
+         // Create a new list, associating the same json_header to each document.
+         const bulk_operations = data.flatMap(doc => [json_header, doc])
+
+         // If you check the .bulk() API, you will see that we can provide 'index'
+         // as an argument here, but we don't need to given we have associated index
+         // objects with each document. Refresh causes Elasticsearch to refresh itself 
+         // after this import.
+         client.bulk({
+           refresh: true,
+           operations: bulk_operations
+         }).then((es_res) => {
+
+           // On a successful import, get the count of the index and return that
+           // as part of the success message.
+           client.count({
+             index: index
+           }).then((es_res) => {
+             const response = { "success": "index count is " + es_res.count }
+             res.json(response)
+           })
+         }).catch((es_err) => {
+           res.json(es_err)
+         })
+       } catch (e) {
+         res.json(e)
+       }
      }
-
-     const operations = data.flatMap(doc => [json_header, doc])
-     const bulk_response = await client.bulk({ refresh: true, operations})
-
-     if(bulk_response.errors) {
-       res.json(bulk_response.errors)
-     }
-
-     res.json({ "status": "success" })
    })
 
-----
+.. dropdown:: CLI Curl Example
 
-All right! You are still here? Then onwards and oxwards!
+   .. code:: bash
+
+      $ curl -X PUT --header 'Content-Type: application/json' http://localhost:3001/index/penguins/docs/import -d '
+      {
+        "file": "/path/to/penguins.json"
+      }'

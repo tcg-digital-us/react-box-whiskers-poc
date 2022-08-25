@@ -115,7 +115,7 @@ with the IndicesCreateRequest type argument defined for <code class="docutils li
 <span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">spec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="w"></span>
 
 <span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">spec</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">({</span><span class="w"> </span><span class="s2">&quot;error&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;spec is a required parameter.&quot;</span><span class="w"> </span><span class="p">})</span><span class="w"></span>
+<span class="w">    </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">({</span><span class="w"> </span><span class="s2">&quot;error&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Backend API &#39;/index/new&#39; requires body parameter&#39;spec&#39;.&quot;</span><span class="w"> </span><span class="p">})</span><span class="w"></span>
 <span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nx">client</span><span class="p">.</span><span class="nx">indices</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">spec</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">es_res</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">      </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">es_res</span><span class="p">)</span><span class="w"></span>
@@ -126,7 +126,52 @@ with the IndicesCreateRequest type argument defined for <code class="docutils li
 <span class="p">})</span><span class="w"></span>
 </pre></div>
 </div>
-</section>
+<details class="sphinx-bs dropdown card mb-3">
+<summary class="summary-title card-header">
+CLI Curl Example<div class="summary-down docutils">
+<svg version="1.1" width="24" height="24" class="octicon octicon-chevron-down" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M5.22 8.72a.75.75 0 000 1.06l6.25 6.25a.75.75 0 001.06 0l6.25-6.25a.75.75 0 00-1.06-1.06L12 14.44 6.28 8.72a.75.75 0 00-1.06 0z"></path></svg></div>
+<div class="summary-up docutils">
+<svg version="1.1" width="24" height="24" class="octicon octicon-chevron-up" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M18.78 15.28a.75.75 0 000-1.06l-6.25-6.25a.75.75 0 00-1.06 0l-6.25 6.25a.75.75 0 101.06 1.06L12 9.56l5.72 5.72a.75.75 0 001.06 0z"></path></svg></div>
+</summary><div class="summary-content card-body docutils">
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ curl -X PUT --header <span class="s1">&#39;Content-Type: application/json&#39;</span> http://localhost:3001/index/new -d <span class="s1">&#39;</span>
+<span class="s1">{</span>
+<span class="s1">  &quot;index&quot;: &quot;penguins&quot;,</span>
+<span class="s1">  &quot;settings&quot;: {</span>
+<span class="s1">    &quot;index&quot;: {</span>
+<span class="s1">      &quot;number_of_shards&quot;: 1,</span>
+<span class="s1">      &quot;number_of_replicas&quot;: 1</span>
+<span class="s1">    }</span>
+<span class="s1">  },</span>
+<span class="s1">  &quot;mappings&quot;: {</span>
+<span class="s1">    &quot;properties&quot;: {</span>
+<span class="s1">      &quot;Species&quot;: {</span>
+<span class="s1">        &quot;type&quot;: &quot;text&quot;</span>
+<span class="s1">      },</span>
+<span class="s1">      &quot;Island&quot;: {</span>
+<span class="s1">        &quot;type&quot;: &quot;text&quot;</span>
+<span class="s1">      },</span>
+<span class="s1">      &quot;Beak Length (mm)&quot;: {</span>
+<span class="s1">        &quot;type&quot;: &quot;float&quot;</span>
+<span class="s1">      },</span>
+<span class="s1">      &quot;Beak Depth (mm)&quot;: {</span>
+<span class="s1">        &quot;type&quot;: &quot;float&quot;</span>
+<span class="s1">      },</span>
+<span class="s1">      &quot;Flipper Length (mm)&quot;: {</span>
+<span class="s1">        &quot;type&quot;: &quot;float&quot;</span>
+<span class="s1">      },</span>
+<span class="s1">      &quot;Body Mass (g)&quot;: {</span>
+<span class="s1">        &quot;type&quot;: &quot;float&quot;</span>
+<span class="s1">      },</span>
+<span class="s1">      &quot;Sex&quot;: {</span>
+<span class="s1">        &quot;type&quot;: &quot;text&quot;</span>
+<span class="s1">      }</span>
+<span class="s1">    }</span>
+<span class="s1">  }</span>
+<span class="s1">}&#39;</span>
+</pre></div>
+</div>
+</div>
+</details></section>
 
 
            </div>

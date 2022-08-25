@@ -69,13 +69,19 @@
              
   <section id="import">
 <h1>Import<a class="headerlink" href="#import" title="Permalink to this headline"></a></h1>
-<p>Imports data of a single type contained inside a JSON file into an Elasticsearch index.</p>
+<p>Imports data contained inside a JSON file into an Elasticsearch index.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This route definition assumes that the documents are not associated with
+a type. Adding functionality for discerning and uploading documents with
+uniform or varying types will be an excersize left for the reader.</p>
+</div>
 <div class="sphinx-bs container-lg pb-3 docutils">
 <div class="row docutils">
 <div class="d-flex col-lg-12 p-2 docutils">
 <div class="card w-100 shadow docutils">
 <div class="card-body docutils">
-<p class="card-text"><span class="sphinx-bs badge badge-secondary">PUT</span> /index/docs/import</p>
+<p class="card-text"><span class="sphinx-bs badge badge-secondary">PUT</span> /index/{index_name}/docs/import</p>
 </div>
 </div>
 </div>
@@ -83,19 +89,18 @@
 </div>
 <p><strong>Parameters</strong></p>
 <ul>
-<li><p>body - An object containing the index name, document type (optional), and filename from
-which the data will be uploaded.</p>
+<li><p>index_name - Name of index to which the documents will be imported.</p></li>
+<li><p>body - An object containing the filename from which the data will be uploaded.</p>
 <p>e.g.:</p>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="s2">&quot;index&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;penguins&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="s2">&quot;file&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;/path_to_file/penguins.json&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="s2">&quot;file&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;/path/to/penguins.json&quot;</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
 </li>
 </ul>
-<p>The data that we plan to import is an array of
-JSON objects within <code class="docutils literal notranslate"><span class="pre">penguins.json</span></code>, and we will assume that currently this is the only data format that we
+<p>The data that we plan to import is an array of JSON objects within <code class="docutils literal notranslate"><span class="pre">penguins.json</span></code>,
+and we will assume that currently this is the only data format that we
 will be using to upload. We can import this file as a list of
 documents to add to a penguins index, but to do so we need to manipulate the
 data in a way that makes Elasticsearch’s bulk upload function happy.</p>
@@ -111,14 +116,20 @@ data in a way that makes Elasticsearch’s bulk upload function happy.</p>
 <span class="w">    </span><span class="s2">&quot;Sex&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;MALE&quot;</span><span class="w"></span>
 <span class="w">  </span><span class="p">},</span><span class="w"></span>
 <span class="w">  </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="p">...</span><span class="w"></span>
+<span class="w">    </span><span class="s2">&quot;Species&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Adelie&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="s2">&quot;Island&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Torgersen&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="s2">&quot;Beak Length (mm)&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">39.5</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="s2">&quot;Beak Depth (mm)&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">17.4</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="s2">&quot;Flipper Length (mm)&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">186</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="s2">&quot;Body Mass (g)&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">3800</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="s2">&quot;Sex&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;FEMALE&quot;</span><span class="w"></span>
 <span class="w">  </span><span class="p">},</span><span class="w"></span>
 <span class="w">  </span><span class="p">...</span><span class="w"></span>
 <span class="p">]</span><span class="w"></span>
 </pre></div>
 </div>
 <p>But elasticsearch’s bulk function requires each document in the data to have the
-index and type defined for each document. You can see how this works with the
+index and, optionally, type defined for each document. You can see how this works with the
 command line equivalent of this API call:</p>
 <p>Equivalent Elasticsearch CLI API Call:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl --cacert <span class="s1">&#39;/path/to/elasticsearch-8.3.3/config/certs/http_ca.crt&#39;</span> --user <span class="s1">&#39;elastic:ELASTIC_PASSWORD&#39;</span> -X PUT --header <span class="s1">&#39;Content-Type: application/json&#39;</span> https://localhost:9200/_bulk -d <span class="s1">&#39;</span>
@@ -130,17 +141,29 @@ command line equivalent of this API call:</p>
 <span class="s1">&#39;</span>
 </pre></div>
 </div>
-<p>In javascript though, the end product that we will be provide will look more like this:</p>
+<p>In javascript we will be creating an equivalent list to pass to the client:</p>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="w"></span>
-<span class="w">  </span><span class="p">[</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="s2">&quot;index&quot;</span><span class="o">:</span><span class="p">{</span><span class="w"> </span><span class="s2">&quot;_index&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;penguins&quot;</span><span class="p">}</span><span class="w"> </span><span class="p">},</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="s2">&quot;Species&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Adelie&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Island&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Torgersen&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Beak Length (mm)&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">39.1</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Beak Depth (mm)&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">18.7</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Flipper Length (mm)&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">181</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Body Mass (g)&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">3750</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Sex&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;MALE&quot;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
-<span class="w">  </span><span class="p">],</span><span class="w"></span>
-<span class="w">  </span><span class="p">[</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="s2">&quot;index&quot;</span><span class="o">:</span><span class="p">{</span><span class="w"> </span><span class="s2">&quot;_index&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;penguins&quot;</span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="s2">&quot;Species&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Adelie&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Island&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Torgersen&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Beak Length (mm)&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">39.5</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Beak Depth (mm)&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">17.4</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Flipper Length (mm)&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">186</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Body Mass (g)&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">3800</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Sex&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;FEMALE&quot;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
-<span class="w">  </span><span class="p">],</span><span class="w"></span>
-<span class="w">  </span><span class="p">...</span><span class="w"></span>
+<span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">index</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">_index</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;penguins&quot;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">},</span><span class="w"></span>
+<span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">   </span><span class="s2">&quot;Species&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Adelie&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">   </span><span class="s2">&quot;Island&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Torgersen&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">   </span><span class="s2">&quot;Beak Length (mm)&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">39.1</span><span class="p">,</span><span class="w"></span>
+<span class="w">   </span><span class="s2">&quot;Beak Depth (mm)&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">18.7</span><span class="p">,</span><span class="w"></span>
+<span class="w">   </span><span class="s2">&quot;Flipper Length (mm)&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">181</span><span class="p">,</span><span class="w"></span>
+<span class="w">   </span><span class="s2">&quot;Body Mass (g)&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">3750</span><span class="p">,</span><span class="w"></span>
+<span class="w">   </span><span class="s2">&quot;Sex&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;MALE&quot;</span><span class="w"></span>
+<span class="w"> </span><span class="p">},</span><span class="w"></span>
+<span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">index</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">_index</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;penguins&quot;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">},</span><span class="w"></span>
+<span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">   </span><span class="s2">&quot;Species&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Adelie&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">   </span><span class="s2">&quot;Island&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Torgersen&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">   </span><span class="s2">&quot;Beak Length (mm)&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">39.5</span><span class="p">,</span><span class="w"></span>
+<span class="w">   </span><span class="s2">&quot;Beak Depth (mm)&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">17.4</span><span class="p">,</span><span class="w"></span>
+<span class="w">   </span><span class="s2">&quot;Flipper Length (mm)&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">186</span><span class="p">,</span><span class="w"></span>
+<span class="w">   </span><span class="s2">&quot;Body Mass (g)&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">3800</span><span class="p">,</span><span class="w"></span>
+<span class="w">   </span><span class="s2">&quot;Sex&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;FEMALE&quot;</span><span class="w"></span>
+<span class="w"> </span><span class="p">},</span><span class="w"></span>
+<span class="w"> </span><span class="p">...</span><span class="w"></span>
 <span class="p">]</span><span class="w"></span>
 </pre></div>
 </div>
@@ -148,32 +171,70 @@ command line equivalent of this API call:</p>
 map all of the new index identifying objects to each document, resulting
 in a JSON array that we can provide to Elasticsearch for bulk upload.</p>
 <p><strong>Code</strong></p>
-<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">app</span><span class="p">.</span><span class="nx">put</span><span class="p">(</span><span class="s2">&quot;/index/docs/import&quot;</span><span class="p">,</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="w"> </span><span class="nx">res</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">index</span><span class="w"></span>
-<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">type</span><span class="w"></span>
-<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">filename</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">file</span><span class="w"></span>
-<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">require</span><span class="p">(</span><span class="nx">filename</span><span class="p">)</span><span class="w"></span>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="c1">// Some parts of this route could be refactored/abstracted out for</span><span class="w"></span>
+<span class="c1">// more modularity, but this will be left up to the reader.</span><span class="w"></span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">put</span><span class="p">(</span><span class="s2">&quot;/index/:name/docs/import&quot;</span><span class="p">,</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="w"> </span><span class="nx">res</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">name</span><span class="w"></span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">filename</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">filename</span><span class="w"></span>
 
-<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">json_header</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s2">&quot;index&quot;</span><span class="o">:</span><span class="p">{</span><span class="w"> </span><span class="s2">&quot;_index&quot;</span><span class="o">:</span><span class="w"> </span><span class="nx">index</span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">index</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">!</span><span class="nx">filename</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">({</span><span class="w"> </span><span class="s2">&quot;error&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Backend API &#39;/index/{index_name}/docs/import&#39; requires body parameter &#39;filename&#39;&quot;</span><span class="w"> </span><span class="p">})</span><span class="w"></span>
+<span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 
-<span class="w">  </span><span class="k">if</span><span class="p">(</span><span class="nx">type</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nx">json_header</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">][</span><span class="s1">&#39;_type&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">type</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// We are assuming here that each entry in our penguins dataset belongs to the</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// same index, so we are giving each index definition the same value.</span><span class="w"></span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">json_header</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s2">&quot;index&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s2">&quot;_index&quot;</span><span class="o">:</span><span class="w"> </span><span class="nx">index</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">// Require doesn&#39;t return a promise, so we need to use a try/catch statement</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// to catch an error when loading the file.</span><span class="w"></span>
+<span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">require</span><span class="p">(</span><span class="nx">filename</span><span class="p">)</span><span class="w"></span>
+
+<span class="w">      </span><span class="c1">// Create a new list, associating the same json_header to each document.</span><span class="w"></span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">bulk_operations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">data</span><span class="p">.</span><span class="nx">flatMap</span><span class="p">(</span><span class="nx">doc</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">[</span><span class="nx">json_header</span><span class="p">,</span><span class="w"> </span><span class="nx">doc</span><span class="p">])</span><span class="w"></span>
+
+<span class="w">      </span><span class="c1">// If you check the .bulk() API, you will see that we can provide &#39;index&#39;</span><span class="w"></span>
+<span class="w">      </span><span class="c1">// as an argument here, but we don&#39;t need to given we have associated index</span><span class="w"></span>
+<span class="w">      </span><span class="c1">// objects with each document. Refresh causes Elasticsearch to refresh itself</span><span class="w"></span>
+<span class="w">      </span><span class="c1">// after this import.</span><span class="w"></span>
+<span class="w">      </span><span class="nx">client</span><span class="p">.</span><span class="nx">bulk</span><span class="p">({</span><span class="w"></span>
+<span class="w">        </span><span class="nx">refresh</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nx">operations</span><span class="o">:</span><span class="w"> </span><span class="nx">bulk_operations</span><span class="w"></span>
+<span class="w">      </span><span class="p">}).</span><span class="nx">then</span><span class="p">((</span><span class="nx">es_res</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+
+<span class="w">        </span><span class="c1">// On a successful import, get the count of the index and return that</span><span class="w"></span>
+<span class="w">        </span><span class="c1">// as part of the success message.</span><span class="w"></span>
+<span class="w">        </span><span class="nx">client</span><span class="p">.</span><span class="nx">count</span><span class="p">({</span><span class="w"></span>
+<span class="w">          </span><span class="nx">index</span><span class="o">:</span><span class="w"> </span><span class="nx">index</span><span class="w"></span>
+<span class="w">        </span><span class="p">}).</span><span class="nx">then</span><span class="p">((</span><span class="nx">es_res</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">          </span><span class="kd">const</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s2">&quot;success&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;index count is &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">es_res</span><span class="p">.</span><span class="nx">count</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">          </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">response</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="p">})</span><span class="w"></span>
+<span class="w">      </span><span class="p">}).</span><span class="k">catch</span><span class="p">((</span><span class="nx">es_err</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">es_err</span><span class="p">)</span><span class="w"></span>
+<span class="w">      </span><span class="p">})</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="nx">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
 <span class="w">  </span><span class="p">}</span><span class="w"></span>
-
-<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">operations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">data</span><span class="p">.</span><span class="nx">flatMap</span><span class="p">(</span><span class="nx">doc</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">[</span><span class="nx">json_header</span><span class="p">,</span><span class="w"> </span><span class="nx">doc</span><span class="p">])</span><span class="w"></span>
-<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">bulk_response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">bulk</span><span class="p">({</span><span class="w"> </span><span class="nx">refresh</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="nx">operations</span><span class="p">})</span><span class="w"></span>
-
-<span class="w">  </span><span class="k">if</span><span class="p">(</span><span class="nx">bulk_response</span><span class="p">.</span><span class="nx">errors</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">bulk_response</span><span class="p">.</span><span class="nx">errors</span><span class="p">)</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
-
-<span class="w">  </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">({</span><span class="w"> </span><span class="s2">&quot;status&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;success&quot;</span><span class="w"> </span><span class="p">})</span><span class="w"></span>
 <span class="p">})</span><span class="w"></span>
 </pre></div>
 </div>
-<hr class="docutils" />
-<p>All right! You are still here? Then onwards and oxwards!</p>
-</section>
+<details class="sphinx-bs dropdown card mb-3">
+<summary class="summary-title card-header">
+CLI Curl Example<div class="summary-down docutils">
+<svg version="1.1" width="24" height="24" class="octicon octicon-chevron-down" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M5.22 8.72a.75.75 0 000 1.06l6.25 6.25a.75.75 0 001.06 0l6.25-6.25a.75.75 0 00-1.06-1.06L12 14.44 6.28 8.72a.75.75 0 00-1.06 0z"></path></svg></div>
+<div class="summary-up docutils">
+<svg version="1.1" width="24" height="24" class="octicon octicon-chevron-up" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M18.78 15.28a.75.75 0 000-1.06l-6.25-6.25a.75.75 0 00-1.06 0l-6.25 6.25a.75.75 0 101.06 1.06L12 9.56l5.72 5.72a.75.75 0 001.06 0z"></path></svg></div>
+</summary><div class="summary-content card-body docutils">
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ curl -X PUT --header <span class="s1">&#39;Content-Type: application/json&#39;</span> http://localhost:3001/index/penguins/docs/import -d <span class="s1">&#39;</span>
+<span class="s1">{</span>
+<span class="s1">  &quot;file&quot;: &quot;/path/to/penguins.json&quot;</span>
+<span class="s1">}&#39;</span>
+</pre></div>
+</div>
+</div>
+</details></section>
 
 
            </div>

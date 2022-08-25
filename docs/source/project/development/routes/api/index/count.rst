@@ -20,13 +20,13 @@ Get the count of documents within a single index.
 
    app.get("/index/:name/count", (req, res) => {
 
-     const name = req.params.name
+     const index_name = req.params.name
 
-     if (!name) {
-       res.json({ "error": "index name is a required parameter." })
+     if (!index_name) {
+       res.json({ "error": "Backend API '/index/{index_name}/count' requires path parameter 'index_name'." })
      } else {
        client.count({
-         index: name
+         index: index_name
        }).then((es_res) => {
          res.json(es_res)
        }).catch((es_err) => {
@@ -35,5 +35,9 @@ Get the count of documents within a single index.
      }
    })
 
+.. dropdown:: CLI Curl Example
 
-   
+   .. code:: bash
+
+      $ curl -X GET http://localhost:3001/index/penguins/count
+

@@ -44,11 +44,11 @@ Creates a new index given the provided index schema.
 .. code:: javascript
 
    app.put("/index/new", (req, res) => {
-   
-     const spec = req.body 
- 
+
+     const spec = req.body
+
      if (!spec) {
-       res.json({ "error": "spec is a required parameter." })
+       res.json({ "error": "Backend API '/index/new' requires body parameter'spec'." })
      } else {
        client.indices.create(spec).then((es_res) => {
          res.json(es_res)
@@ -57,3 +57,43 @@ Creates a new index given the provided index schema.
        })
      }
    })
+
+.. dropdown:: CLI Curl Example
+
+   .. code:: bash
+
+      $ curl -X PUT --header 'Content-Type: application/json' http://localhost:3001/index/new -d '
+      {
+        "index": "penguins",
+        "settings": {
+          "index": {
+            "number_of_shards": 1,
+            "number_of_replicas": 1
+          }
+        },
+        "mappings": {
+          "properties": {
+            "Species": {
+              "type": "text"
+            },
+            "Island": {
+              "type": "text"
+            },
+            "Beak Length (mm)": {
+              "type": "float"
+            },
+            "Beak Depth (mm)": {
+              "type": "float"
+            },
+            "Flipper Length (mm)": {
+              "type": "float"
+            },
+            "Body Mass (g)": {
+              "type": "float"
+            },
+            "Sex": {
+              "type": "text"
+            }
+          }
+        }
+      }'

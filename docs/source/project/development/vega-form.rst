@@ -6,7 +6,8 @@ Our last major step is to include a form so that new data can be added to our
 penguins data and displayed in our graph. To do this, we will set up a basic HTML 
 form that when submitted, takes the input values and forms a requst body and calls
 ``/index/docs/add`` on our backend. DOM class names and id's will be connected to 
-CSS styling later.
+CSS styling later. We could break this form up into multiple React modules, or make
+it a module itself, but that is an exercise left to the reader.
 
 .. code:: JSX
 
@@ -45,7 +46,6 @@ the end, we can print the current value of our ``last_elastic_response`` state f
 debugging purposes:
 
 .. code:: JSX
-   :force:
 
    return (
      <div className="App">
@@ -119,7 +119,6 @@ After a successful fetch request, we then set the ``last_elastic_response`` stat
 current fetch's response:
 
 .. code:: JSX
-   :force:
 
    function addDocToPenguinsIndex(event) {
 
@@ -128,23 +127,22 @@ current fetch's response:
 
      var request_data = {}
 
-     // Build request_data object with our desired index name along with
-     // the values provided in the form inputs via their id/name.
-     request_data["name"] = "penguins"
-     request_data["data"] = {}
-     request_data["data"]["Species"] = event.target.species.value
-     request_data["data"]["Island"] = event.target.island.value
-     request_data["data"]["Beak Length (mm)"] = event.target.beak_length.value
-     request_data["data"]["Beak Depth (mm)"] = event.target.beak_depth.value
-     request_data["data"]["Flipper Length (mm)"] = event.target.flipper_length.value
-     request_data["data"]["Body Mass (g)"] = event.target.body_mass.value
-     request_data["data"]["Sex"] = event.target.sex.value
+     // Build request_data object with the values provided in the form inputs via
+     // their id/name.
+     request_data["Species"] = event.target.species.value
+     request_data["Island"] = event.target.island.value
+     request_data["Beak Length (mm)"] = event.target.beak_length.value
+     request_data["Beak Depth (mm)"] = event.target.beak_depth.value
+     request_data["Flipper Length (mm)"] = event.target.flipper_length.value
+     request_data["Body Mass (g)"] = event.target.body_mass.value
+     request_data["Sex"] = event.target.sex.value
 
      // Because this is a PUT call, we provide fetch() both the
-     // URL and the metadata for our PUT request.
+     // URL and the metadata for our PUT request. Then we handle
+     // the the response and error.
      //
      // Ensure to stringify the JSON object before delivery.
-     fetch('http://localhost:3001/index/docs/add', {
+     fetch('http://localhost:3001/index/penguins/docs/add', {
        method: "PUT",
        headers: {
          'Content-Type': 'application/json',
@@ -158,92 +156,89 @@ current fetch's response:
          setLastElasticResponse(data)
        })
      })
-     .catch((error) => {
-       console.error('Error:', error);
+     .catch(() => {
+       console.error('An error occured when trying to PUT /index/penguins/docs/add');
      });
    }
 
 The final code for App.js should look something like this:
 
 .. code:: JSX
-   :force:
 
    import logo from './logo.svg';
    import './App.css';
-   import { useState } from 'react';
-   import { useEffect } from 'react';
-   import vegaEmbed from 'vega-embed';
+   import { useState, useEffect } from 'react'
+   import vegaEmbed from 'vega-embed'
 
    function App() {
 
-     const [ last_elastic_response, setLastElasticResponse ] = useState({});
-
-     async function getBoxPlotData() {
+     const [ last_elastic_response, setLastElasticResponse ] = useState({})
+ 
+     async function getDocsFromIndex(index) {
        var data = []
-       const url = 'http://localhost:3001/index/penguins/docs/all'
-       const response = await fetch(url);
-       const elastic_json = await response.json();
-       elastic_json.forEach((each) => {
-         data.push(each._source)
+
+       const url = `http://localhost:3001/index/${index}/docs/all`
+       const response = await fetch(url)
+       const elastic_json = await response.json()
+
+       elastic_json.forEach((each_document) => {
+         data.push(each_document._source)
        })
+
        return data
      }
 
-     async function DrawBoxPlot() {
-       const box_plot_data = await getBoxPlotData();
-       console.log(box_plot_data)
+     async function drawBoxWhiskersPlot() {
+       const plot_index = 'penguins'
 
-       let yourVlSpec = {
-         width: "container",
-         height: {"step": 30},
-         data: {
-           values: box_plot_data
-         },
-         mark: {
-           type: "boxplot",
-           extent: "min-max"
-         },
-         encoding: {
-           y: { "field": "Species", "type": "nominal" },
-           x: {
-             field: "Body Mass (g)",
-             type: "quantitative",
-             scale: { "zero": false }
+       getDocsFromIndex(plot_index).then((box_plot_data) => {
+
+         const box_whiskers_spec = {
+           data: {
+             values: box_plot_data
+           },
+           mark: {
+             type: "boxplot",
+             extent: "min-max"
+           },
+           encoding: {
+             y: { "field": "Species", "type": "nominal" },
+             x: {
+               field: "Body Mass (g)",
+               type: "quantitative",
+               scale: { "zero": false }
+             }
            }
          }
-       }
-
-       vegaEmbed('#Graph', yourVlSpec);
+        
+         vegaEmbed('#Graph', box_whiskers_spec);
+       }).catch(() => {
+         console.log(`An error occured when trying to fetch /index/${plot_index}/docs/all`)
+       })
      }
 
      useEffect(() => {
-       (async () => {
-         DrawBoxPlot()
-       })();
+       drawBoxWhiskersPlot()
      }, []);
 
      useEffect(() => {
-       (async () => {
-         DrawBoxPlot()
-       })();
-     }, [last_elastic_response]);
+       drawBoxWhiskersPlot()
+     }, [last_elastic_response])
 
      function addDocToPenguinsIndex(event) {
 
        event.preventDefault()
        var request_data = {}
 
-       request_data["name"] = "penguins"
-       request_data["data"] = {}
-       request_data["data"]["Species"] = event.target.species.value
-       request_data["data"]["Island"] = event.target.island.value
-       request_data["data"]["Beak Length (mm)"] = event.target.beak_length.value
-       request_data["data"]["Beak Depth (mm)"] = event.target.beak_depth.value
-       request_data["data"]["Flipper Length (mm)"] = event.target.flipper_length.value
-       request_data["data"]["Body Mass (g)"] = event.target.body_mass.value
-       request_data["data"]["Sex"] = event.target.sex.value
+       request_data["Species"] = event.target.species.value
+       request_data["Island"] = event.target.island.value
+       request_data["Beak Length (mm)"] = event.target.beak_length.value
+       request_data["Beak Depth (mm)"] = event.target.beak_depth.value
+       request_data["Flipper Length (mm)"] = event.target.flipper_length.value
+       request_data["Body Mass (g)"] = event.target.body_mass.value
+       request_data["Sex"] = event.target.sex.value
 
-       fetch('http://localhost:3001/index/docs/add', {
+       fetch('http://localhost:3001/index/penguins/docs/add', {
          method: "PUT",
          headers: {
            'Content-Type': 'application/json',
@@ -252,12 +247,11 @@ The final code for App.js should look something like this:
        })
        .then((response) => {
          response.json().then((data) => {
-           console.log(data)
            setLastElasticResponse(data)
          })
        })
-       .catch((error) => {
-         console.error('Error:', error);
+       .catch(() => {
+         console.error('An error occured when trying to PUT /index/penguins/docs/add');
        });
      }
 
