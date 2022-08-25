@@ -201,8 +201,6 @@ available. For our purposes, I will provide the specification with a comment exp
        // X to reflext the 'Body Mass (g)' with
        // a quantitative (numeric) type.
        const box_whiskers_spec = {
-         width: "container",
-         height: {"step": 30},
          data: {
            values: box_plot_data
          },
