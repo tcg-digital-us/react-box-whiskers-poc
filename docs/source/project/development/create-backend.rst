@@ -133,6 +133,7 @@ Here is what we should end up with in ``index.js``:
 
    import { createRequire } from 'module'
    const require = createRequire(import.meta.url)
+   
    const { Client } = require('@elastic/elasticsearch')
    const fs = require('fs')
 
@@ -155,6 +156,8 @@ Here is what we should end up with in ``index.js``:
 
    const app = Express()
    app.use(cors())
+   app.use(Express.json())
+   app.use(Express.urlencoded({ extended: true }))
 
    app.get("/status", async (req, res) => {
      client.cluster.health().then((es_res) => {
