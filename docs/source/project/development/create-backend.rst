@@ -13,7 +13,7 @@ interact with kibana.
    $ npm init -y
 
 To ensure that the project will be run as an es6 module, we need to add
-``"type": "module"`` to the package.json configuration. The ``...`` just
+``"type": "module"`` to the ``package.json`` configuration. The ``...`` just
 denotes that there may or may not be other values before and after the
 type is defined (it just has to be defined at the same indent level as
 'name'):
